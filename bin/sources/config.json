@@ -1,0 +1,22 @@
+{
+  "client": {
+    "online": false,
+    "host": "localhost",
+    "port": 25501,
+    "log_level": "INFO"
+  },
+  "server": {
+    "online": false,
+    "host": "localhost",
+    "port": 25565,
+    "log_level": "INFO"
+  },
+  "bridge": {
+    "log_level": "INFO"
+  },
+  "plugins": {
+    "log_level": "INFO"
+  },
+  "safe_disconnect": true,
+  "version": 404
+}
