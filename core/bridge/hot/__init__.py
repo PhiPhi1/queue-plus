@@ -42,10 +42,12 @@ class HotBridge(Bridge):
 		self.joined_game = False
 		
 		super(HotBridge, self).__init__(*args, **kwargs)
-
+	
+	
 	def make_profile(self):
 		raise Exception("make_profile is not available for hot swappable bridges")
 	
+	# noinspection PyArgumentList
 	def upstream_ready(self):
 		self.logger.debug("Upstream ready")
 		self.enable_forwarding()

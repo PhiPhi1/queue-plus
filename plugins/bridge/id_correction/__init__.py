@@ -101,7 +101,7 @@ class IdCorrection(BridgePlugin):
 		event_type = buff.unpack_varint()
 		
 		if event_type == 1:
-			duration = buff.unpack_varint()
+			_ = buff.unpack_varint()
 			buff_eid = buff.unpack("i")
 			
 			if buff_eid == self.proxy_player_eid:
@@ -114,7 +114,7 @@ class IdCorrection(BridgePlugin):
 		elif event_type == 2:
 			buff_eid = buff.unpack_varint()
 			buffe_eid = buff.unpack("i")
-			message = buff.unpack_chat()
+			_ = buff.unpack_chat()
 			
 			if buff_eid == self.proxy_player_eid:
 				old = self.buff_type.pack_varint(buff_eid)

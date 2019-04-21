@@ -37,6 +37,7 @@ from headless.upstream.protocol import PseudoProtocol
 
 class TheVoidProtocol(PseudoProtocol):
 		
+	# noinspection PyArgumentList
 	def setup_bridge(self, bridge):
 		super(TheVoidProtocol, self).setup_bridge(bridge)
 		

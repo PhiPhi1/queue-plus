@@ -44,7 +44,6 @@ class CachingPlugin(UpstreamPlugin):
 	# importing scoreboard into namespace
 	from plugins.upstream.cache.scoreboard import packet_mirror_boss_bar, packet_mirror_display_scoreboard, packet_mirror_scoreboard_objective, packet_mirror_teams, packet_mirror_update_score
 	
-	
 	@classmethod
 	def load_data(cls, file, output):
 		file = os.path.join(os.getcwd(), file)
@@ -53,6 +52,7 @@ class CachingPlugin(UpstreamPlugin):
 			for row in reader:
 				output.append(row["packet"])
 		return
+	
 	
 	def __init__(self, *args, **kwargs):
 		self.data = []
@@ -72,6 +72,7 @@ class CachingPlugin(UpstreamPlugin):
 			self.processed_data[name] = {}
 		return
 	
+	# noinspection PyArgumentList
 	def mirror_packet(self, buff, name):
 		if name in self.packet_blacklist:
 			buff.discard()
@@ -85,12 +86,11 @@ class CachingPlugin(UpstreamPlugin):
 		elif name in self.packet_process:
 			method_pointer = "packet_mirror_%s" % name
 			self.handle_packet(method_pointer, buff)
-			
+		
 		else:
 			self.data.append((name, buff.read()))
 		
 		return
-	
 	
 	def concat_to_array(self):
 		out = []
@@ -99,8 +99,6 @@ class CachingPlugin(UpstreamPlugin):
 		out.extend(self.data)
 		
 		for name in self.loading_strategy:
-			counter = 0
-			
 			if name in self.processed_data:
 				method_pointer = "serialize_%s" % name
 				handler = getattr(self, method_pointer, None)
@@ -110,5 +108,5 @@ class CachingPlugin(UpstreamPlugin):
 			
 			if name in self.static_data:
 				out.append((name, self.static_data[name]))
-				
+		
 		return out

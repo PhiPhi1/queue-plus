@@ -39,6 +39,7 @@ from core.bridge.hot import HotBridge
 from plugins.bridge import get_plugins
 
 
+# noinspection PyArgumentList
 class ProxyBridge(HotBridge):
 	ticker_type = Ticker
 	

@@ -32,7 +32,7 @@ def main():
 	config = ConfigController.instance().data
 	
 	# Initializes the upstream controller
-	upstream_controller = UpstreamController.instance()
+	UpstreamController.instance()
 
 	# Create factory
 	factory = DownstreamFactory()
@@ -49,4 +49,5 @@ def main():
 	
 if __name__ == "__main__":
 	main()
+	# noinspection PyUnresolvedReferences
 	reactor.run()

@@ -39,5 +39,6 @@ def disable_forwarding(self):
 	return
 
 
+# noinspection PyUnusedLocal
 def enable_fast_forwarding(self):
 	raise Exception("Fast forwarding is not available for hot swappable bridges")

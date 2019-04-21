@@ -22,7 +22,7 @@ def packet_mirror_scoreboard_objective(self, buff):
 	name = buff.unpack_string()
 	mode = buff.unpack("b")
 	buff.restore()
-	if not (name) in list(self.processed_data["scoreboard_objective"]):
+	if name not in list(self.processed_data["scoreboard_objective"]):
 		self.processed_data["scoreboard_objective"][name] = []
 
 	if mode == 1:
@@ -44,7 +44,7 @@ def serialize_scoreboard_objective(self):
 def packet_mirror_display_scoreboard(self, buff):
 	buff.save()
 	position = buff.unpack("b")
-	name = buff.unpack_string()
+	# name = buff.unpack_string()
 	buff.restore()
 	
 	self.processed_data["display_scoreboard"][position] = buff.read()
@@ -84,7 +84,7 @@ def packet_mirror_teams(self, buff):
 	mode = buff.unpack("b")
 	buff.restore()
 	
-	if not (name) in list(self.processed_data["teams"]):
+	if name not in list(self.processed_data["teams"]):
 		self.processed_data["teams"][name] = []
 	
 	if mode == 1:
@@ -110,7 +110,7 @@ def packet_mirror_boss_bar(self, buff):
 	uuid = buff.unpack_uuid()
 	action = buff.unpack_varint()
 	
-	if not (uuid) in self.processed_data["boss_bar"]:
+	if uuid not in self.processed_data["boss_bar"]:
 		self.processed_data["boss_bar"][uuid] = {}
 	
 	if action == 1:

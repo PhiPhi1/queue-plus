@@ -68,12 +68,12 @@ class UpstreamController:
 	def load_pseudo_protocol(self, factory_class, bridge, callback=None):
 		bridge.logger.debug("starting pseudo protocol")
 		profile = yield OfflineProfile.from_display_name("protocol")
+		
 		factory = factory_class(profile)
+		factory.account_manager = self
 		factory.protocol_callback = callback
 		
 		bridge.logger.debug("connecting bridge to pseudo protocol")
 		protocol = yield factory.connect(None, None)
-		
-		self.sessions.add_session(protocol)
 		
 		bridge.switch_protocol(protocol)

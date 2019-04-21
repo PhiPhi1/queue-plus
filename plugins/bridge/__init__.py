@@ -22,6 +22,7 @@ from controllers.upstream import UpstreamController
 from plugins import Plugin
 
 
+# noinspection PyMissingConstructor
 class BridgePlugin(Plugin):
 	def __init__(self, bridge, ticker):
 		self.bridge = bridge

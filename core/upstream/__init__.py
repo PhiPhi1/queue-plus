@@ -86,6 +86,7 @@ class UpstreamProtocol(ClientProtocol):
 				print("Error in protocol callback", e)
 		
 		for bridge in self.factory.bridges:
+			# noinspection PyArgumentList
 			self.setup_bridge(bridge)
 	
 	def player_left(self):
@@ -97,6 +98,7 @@ class UpstreamProtocol(ClientProtocol):
 		self.core.unload_plugins()
 		
 		for bridge in self.factory.bridges:
+			# noinspection PyArgumentList
 			self.remove_forwarding_bridge(bridge)
 			bridge.upstream_disconnected()
 	

@@ -40,6 +40,7 @@ class CommmandsPlugin(BridgePlugin):
 			return "finish"
 		return "continue"
 	
+	# noinspection PyMethodMayBeStatic
 	def get_params(self, alias, message):
 		message = message.replace(alias, "")
 		message = message.replace(" ", "", 1)
@@ -50,6 +51,7 @@ class CommmandsPlugin(BridgePlugin):
 			split_message.remove('')
 		return split_message
 	
+	
 	def command_connect(self, params):
 		session_index = params[0]
 		
@@ -59,7 +61,7 @@ class CommmandsPlugin(BridgePlugin):
 		
 		sessions = self.upstream_controller.sessions.protocols
 		session_index = int(session_index)
-
+		
 		if not sessions.__len__() > session_index:
 			self.send_error("Invalid session ID")
 			return
@@ -78,10 +80,12 @@ class CommmandsPlugin(BridgePlugin):
 			self.send_error("Failed to load cache. This is likely an error, please report this and save the logs.")
 		return
 	
+	
 	def send_error(self, message):
 		out_message = "§c%s" % message
 		self.send_response(out_message)
 		return
+	
 	
 	def send_response(self, message):
 		self.bridge.packet_received(self.buff_type(self.buff_type.pack_chat(message) + self.buff_type.pack("B", 1)), "downstream", "chat_message")

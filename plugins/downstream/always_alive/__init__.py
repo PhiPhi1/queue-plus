@@ -18,6 +18,7 @@
 from plugins.downstream import DownstreamPlugin
 
 
+# noinspection PyMethodMayBeStatic
 class AlwaysAlivePlugin(DownstreamPlugin):
 	def __init__(self, *args, **kwargs):
 		super(AlwaysAlivePlugin, self).__init__(*args, **kwargs)

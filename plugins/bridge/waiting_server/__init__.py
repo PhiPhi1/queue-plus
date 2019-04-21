@@ -87,4 +87,3 @@ class WaitingServerPlugin(BridgePlugin):
 		
 		# self.ticker.add_delay(40, delay_callback)
 		return
-	

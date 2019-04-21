@@ -61,8 +61,7 @@ def packet_mirror_destroy_entities(self, buff):
 	entity_count = buff.unpack_varint()
 	for _ in range(entity_count):
 		entity_ids.append(buff.unpack_varint())
-		
-
+	
 	for entity_id in entity_ids:
 		# removes entity from cache
 		del self.processed_data["entity"][entity_id]
@@ -74,7 +73,7 @@ def packet_mirror_destroy_entities(self, buff):
 		# removes entity from set_passengers
 		if entity_id in list(self.processed_data["set_passengers"]):
 			del self.processed_data["set_passengers"][entity_id]
-			
+	
 	return
 
 
@@ -110,7 +109,7 @@ def packet_mirror_set_passengers(self, buff):
 	if entity_id not in list(self.processed_data["entity"]):
 		buff.discard()
 		return
-
+	
 	buff.restore()
 	self.processed_data["set_passengers"][entity_id] = buff.read()
 	return

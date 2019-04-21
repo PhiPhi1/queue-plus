@@ -45,6 +45,7 @@ from plugins.upstream import get_plugins
 
 class PseudoProtocol(UpstreamProtocol):
 	# replaces all connection details with pseudo info
+	# noinspection PyMissingConstructor,PyUnusedLocal,PyUnusedLocal
 	def __init__(self, factory, *args, **kwargs):
 		self.config = ConfigController.instance().data
 		self.core = CoreProtocol(self)
@@ -66,12 +67,11 @@ class PseudoProtocol(UpstreamProtocol):
 		self.setup()
 	
 	def setup(self):
-		self.core.load_plugins(get_plugins())
-		# self.factory.account_manager.sessions.add_session(self)
-		# forces player joined
+		super(PseudoProtocol, self).setup()
 		super(PseudoProtocol, self).player_joined()
 		return
 	
+	# noinspection PyArgumentList
 	def player_joined(self):
 		super(ClientProtocol, self).player_joined()
 		self.core.on_join_plugins()
