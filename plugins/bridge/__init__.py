@@ -57,11 +57,11 @@ def get_plugins():
 	from plugins.bridge.hot_swap import HotSwapPlugin
 	from plugins.bridge.commands import CommmandsPlugin
 	from plugins.bridge.id_correction import IdCorrection
-	from plugins.bridge.waiting_server import WaitingServerPlugin
+	# from plugins.bridge.waiting_server import WaitingServerPlugin
 	
 	return [
 		IdCorrection,
 		HotSwapPlugin,
 		CommmandsPlugin,
-		WaitingServerPlugin
+		# WaitingServerPlugin
 	]

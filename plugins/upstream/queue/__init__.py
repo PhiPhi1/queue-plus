@@ -34,12 +34,8 @@ class QueuePlugin(UpstreamPlugin):
 		chat_message = buff.unpack_chat().to_string(True)
 		_ = buff.unpack("b")
 		
-		if chat_message.lower().startswith("connecting"):
-			self.in_queue = False
-			self.queue_position = 0
-			self.queue_starting_position = 0
-			self.queue_update()
-			return
+		if chat_message.startswith("Connecting"):
+			self.remove_from_queue()
 		
 		bloat_removed = chat_message
 		
@@ -54,6 +50,15 @@ class QueuePlugin(UpstreamPlugin):
 			self.queue_starting_position = int(bloat_removed)
 			
 		self.queue_position = int(bloat_removed)
+		self.queue_update()
+		return
+		
+	def remove_from_queue(self):
+		print("removing queue")
+		
+		self.in_queue = False
+		self.queue_position = 0
+		self.queue_starting_position = 0
 		self.queue_update()
 		return
 		
