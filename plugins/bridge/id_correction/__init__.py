@@ -68,6 +68,7 @@ class IdCorrection(BridgePlugin):
 				if name.startswith(prefix):
 					return self.eid_checker(buff, direction, name)
 		
+		buff.discard()
 		return "continue"
 	
 	def packet_downstream_join_game(self, buff):
@@ -115,6 +116,7 @@ class IdCorrection(BridgePlugin):
 				self.resend_parsed(buff, old, new, "downstream", "combat_event")
 				return "break"
 		
+		buff.discard()
 		return "continue"
 
 	def packet_downstream_face_player(self, buff):
@@ -131,6 +133,7 @@ class IdCorrection(BridgePlugin):
 			self.resend_parsed(buff, old, new, "downstream", "face_player")
 			return "break"
 		
+		buff.discard()
 		return "continue"
 	
 	def packet_downstream_attach_entity(self, buff):
@@ -146,6 +149,7 @@ class IdCorrection(BridgePlugin):
 			self.resend_parsed(buff, old, new, "downstream", "attach_entity")
 			return "break"
 		
+		buff.discard()
 		return "continue"
 	
 	def packet_downstream_set_passengers(self, buff):
@@ -164,6 +168,7 @@ class IdCorrection(BridgePlugin):
 			self.resend_parsed(buff, old, new, "downstream", "set_passengers")
 			return "break"
 		
+		buff.discard()
 		return "continue"
 	
 	def packet_downstream_collect_item(self, buff):
@@ -179,6 +184,7 @@ class IdCorrection(BridgePlugin):
 			self.resend_parsed(buff, old, new, "downstream", "collect_item")
 			return "break"
 		
+		buff.discard()
 		return "continue"
 		
 	def packet_downstream_entity_status(self, buff):
@@ -207,6 +213,7 @@ class IdCorrection(BridgePlugin):
 			self.resend_parsed(buff, old, new, direction, name)
 			return "break"
 		
+		buff.discard()
 		return "continue"
 
 	def packet_downstream_player_list_item(self, buff):
@@ -243,6 +250,7 @@ class IdCorrection(BridgePlugin):
 			self.resend_parsed(buff, old, new, "upstream", "spectate")
 			return "break"
 		
+		buff.discard()
 		return "continue"
 
 	def resend_parsed(self, buff, old, new, direction, name):
