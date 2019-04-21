@@ -46,7 +46,8 @@ class QueueBossBarPlugin(BridgePlugin):
 			"protocol": session,
 			"username": username,
 			"uuid": bar_uuid,
-			"callback": protocol_update
+			"callback": protocol_update,
+			"spawned": False
 		}
 		
 		self.update_boss_bar(session)
@@ -62,8 +63,11 @@ class QueueBossBarPlugin(BridgePlugin):
 		
 		self.bridge.packet_received(self.buff_type(self.buff_type.pack_uuid(session_metadata["uuid"]) + self.buff_type.pack_varint(1)), "downstream", "boss_bar")
 	
-	def create_boss_bar(self, bar_uuid):
-		packed_uuid = self.buff_type.pack_uuid(bar_uuid)
+	def create_boss_bar(self, session):
+		if self.watched_protocols[session]["spawned"]:
+			return
+		
+		packed_uuid = self.buff_type.pack_uuid(self.watched_protocols[session]["uuid"])
 		action = self.buff_type.pack_varint(0)
 		title = self.buff_type.pack_chat(" ")
 		health = self.buff_type.pack("f", 1)
@@ -72,6 +76,7 @@ class QueueBossBarPlugin(BridgePlugin):
 		flags = self.buff_type.pack("x")
 
 		self.bridge.packet_received(self.buff_type(packed_uuid + action + title + health + color + division + flags), "downstream", "boss_bar")
+		self.watched_protocols[session]["spawned"] = True
 	
 	
 	def update_boss_bar(self, session):
@@ -79,12 +84,16 @@ class QueueBossBarPlugin(BridgePlugin):
 		start_pos = upstream_queue.queue_starting_position
 		pos = upstream_queue.queue_position
 		
+		if not self.watched_protocols[session]["spawned"]:
+			self.create_boss_bar(session)
+		
 		if session not in self.watched_protocols:
 			# TODO remove from callbacks
 			return
 		
 		if not upstream_queue.in_queue:
 			print("not in queue")
+			self.removed_watched_protocol(session)
 			return
 		
 		session_metadata = self.watched_protocols[session]
