@@ -23,7 +23,6 @@ class Sessions:
 	
 	
 	def add_session(self, protocol):
-		print("adding session", protocol)
 		self.protocols.append(protocol)
 		return
 	

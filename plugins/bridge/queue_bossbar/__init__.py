@@ -92,7 +92,12 @@ class QueueBossBarPlugin(BridgePlugin):
 			return
 		
 		if not upstream_queue.in_queue:
-			print("not in queue")
+			from plugins.bridge.notifications import NotificationsPlugin
+			notifications = self.bridge.core.get_plugin(NotificationsPlugin)
+			
+			message = "§a[%s] %s has finished the queue" % (self.upstream_controller.sessions.protocols.index(session), self.watched_protocols[session]["username"])
+			notifications.send_chat_notification(message, True)
+			
 			self.removed_watched_protocol(session)
 			return
 		

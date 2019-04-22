@@ -38,7 +38,6 @@ class NotificationsPlugin(BridgePlugin):
 	
 	@staticmethod
 	def convert_to_pitch(pitch):
-		print(0.5 + (pitch * 0.06))
 		return 0.5 + (pitch * 0.06)
 		
 	def queue_tune(self, tune, sound_id):
@@ -102,8 +101,3 @@ class NotificationsPlugin(BridgePlugin):
 
 	def update_player_pos(self, x, y, z):
 		self.player_pos = glm.vec3(x, y, z)
-
-	def packet_mirror_upstream_chat_message(self, buff):
-		print('sending notification')
-		buff.discard()
-		self.send_chat_notification("§a[0] MyCoolName has finished the queue", True)

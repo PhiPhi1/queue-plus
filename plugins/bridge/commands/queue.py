@@ -18,6 +18,7 @@
 
 
 def command_show_queue(self, params):
+	from plugins.upstream.queue import QueuePlugin
 	protocol_sessions = self.upstream_controller.sessions.protocols
 	
 	from plugins.bridge.queue_bossbar import QueueBossBarPlugin
@@ -26,6 +27,9 @@ def command_show_queue(self, params):
 	if params.__len__() is 0:
 		self.send_response("§6Showing all queue boss bars")
 		for session in protocol_sessions:
+			queue_plugin = session.core.get_plugin(QueuePlugin)
+			if not queue_plugin.in_queue:
+				return
 			queue_bar.add_watched_protocol(session)
 		return
 	
@@ -39,8 +43,20 @@ def command_show_queue(self, params):
 		self.send_error("Invalid session ID")
 		return
 	
-	self.send_response("§6Showing queue boss bar for %s" % session_index)
-	queue_bar.add_watched_protocol(protocol_sessions[session_index])
+	session = protocol_sessions[session_index]
+	
+	queue_plugin = session.core.get_plugin(QueuePlugin)
+	if not queue_plugin.in_queue:
+		self.send_error("Session %s is currently not in queue" % session_index)
+		return
+	
+	if session in queue_bar.watched_protocols:
+		message = "§cAlready showing queue for session %s" % self.upstream_controller.sessions.protocols.index(session)
+		self.send_error(message)
+		return
+	
+	self.send_response("§6Showing queue boss bar for session %s" % session_index)
+	queue_bar.add_watched_protocol(session)
 
 
 def command_hide_queue(self, params):
@@ -65,5 +81,10 @@ def command_hide_queue(self, params):
 		self.send_error("Invalid session ID")
 		return
 	
+	session = protocol_sessions[session_index]
+	if session not in queue_bar.watched_protocols:
+		self.send_error("Queue is already hidden for session %s" % session_index)
+		return
+	
 	self.send_response("§6Hiding queue boss bar for %s" % session_index)
-	queue_bar.removed_watched_protocol(protocol_sessions[session_index])
+	queue_bar.removed_watched_protocol(session)
