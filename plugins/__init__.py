@@ -21,9 +21,6 @@ from controllers.config import ConfigController
 
 
 class Plugin:
-	protocol = None
-	ticker = None
-	
 	config = ConfigController.instance().data
 	
 	

@@ -56,6 +56,10 @@ def packet_mirror_destroy_entities(self, buff):
 		# removes entity from set_passengers
 		if entity_id in list(self.processed_data["set_passengers"]):
 			del self.processed_data["set_passengers"][entity_id]
+		
+		# removes player from spawned players
+		if entity_id in list(self.processed_data["spawn_player"]):
+			del self.processed_data["spawn_player"][entity_id]
 	
 	return
 
@@ -126,4 +130,23 @@ def serialize_remove_entity_effect(self):
 	for (entity_id) in list(self.processed_data["remove_entity_effect"]):
 		for buff_data in list(self.processed_data["remove_entity_effect"][entity_id]):
 			out.append(("remove_entity_effect", buff_data))
+	return out
+
+
+def packet_mirror_spawn_player(self, buff):
+	buff.save()
+	player_eid = buff.unpack_varint()
+	buff.restore()
+	
+	if not self.processed_data["spawn_player"]:
+		self.processed_data["spawn_player"] = {}
+	
+	self.processed_data["spawn_player"][player_eid] = buff.read()
+	return
+
+
+def serialize_spawn_player(self):
+	out = []
+	for (entity_id) in list(self.processed_data["spawn_player"]):
+		out.append(("spawn_player", self.processed_data["spawn_player"][entity_id]))
 	return out
