@@ -41,22 +41,22 @@ class NotificationsPlugin(BridgePlugin):
 		return 0.5 + (pitch * 0.06)
 		
 	def queue_tune(self, tune, sound_id):
-		global index
-		index = 0
+		# Not defining the index in the namespace
+		# only making it part of the class because I dont want to use global
+		self.queue_tune_index = 0
 		
 		def sound_loop():
-			global index
-			pitch, _ = tune[index]
+			pitch, _ = tune[self.queue_tune_index]
 			
-			if index + 1 < tune.__len__():
-				_, delay = tune[index + 1]
+			if self.queue_tune_index + 1 < tune.__len__():
+				_, delay = tune[self.queue_tune_index + 1]
 			else:
 				delay = 0
 				
 			self.play_sound(sound_id, pitch)
 			
-			if index + 1 < tune.__len__():
-				index += 1
+			if self.queue_tune_index + 1 < tune.__len__():
+				self.queue_tune_index += 1
 				self.ticker.add_delay(delay, sound_loop)
 		
 		sound_loop()
