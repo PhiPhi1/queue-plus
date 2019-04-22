@@ -217,7 +217,8 @@ class IdCorrection(BridgePlugin):
 		
 		buff.discard()
 		return "continue"
-
+	
+	# TODO plugin error packet_downstream_player_list_item maximum recursion depth exceeded while calling a Python object
 	def packet_downstream_player_list_item(self, buff):
 		buff.save()
 		_ = buff.unpack_varint()
