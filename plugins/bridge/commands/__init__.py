@@ -19,6 +19,11 @@ from plugins.bridge import BridgePlugin
 
 
 class CommmandsPlugin(BridgePlugin):
+	from plugins.bridge.commands.router import route_command
+	from plugins.bridge.commands.connection import command_connect
+	from plugins.bridge.commands.lists import command_accounts, command_sessions
+	from plugins.bridge.commands.queue import command_hide_queue, command_show_queue
+	
 	def packet_upstream_chat_message(self, buff):
 		message = buff.unpack_string()
 		
@@ -26,19 +31,6 @@ class CommmandsPlugin(BridgePlugin):
 			return self.route_command(message[1:].lower())
 		else:
 			return "continue"
-	
-	# TODO: clean up code
-	def route_command(self, command_string):
-		if command_string.startswith("connect"):
-			params = self.get_params("connect", command_string)
-			
-			if params.__len__() is not 1:
-				self.send_error("Expected 1 variable [/connect <session id>]")
-				return "finish"
-			
-			self.command_connect(params)
-			return "finish"
-		return "continue"
 	
 	# noinspection PyMethodMayBeStatic
 	def get_params(self, alias, message):
@@ -50,35 +42,6 @@ class CommmandsPlugin(BridgePlugin):
 		while '' in split_message:
 			split_message.remove('')
 		return split_message
-	
-	
-	def command_connect(self, params):
-		session_index = params[0]
-		
-		if not session_index.isdigit():
-			self.send_error("Invalid session ID")
-			return
-		
-		sessions = self.upstream_controller.sessions.protocols
-		session_index = int(session_index)
-		
-		if not sessions.__len__() > session_index:
-			self.send_error("Invalid session ID")
-			return
-		
-		self.send_response("§6Switching sessions")
-		self.bridge.switch_protocol(sessions[session_index])
-		
-		self.send_response("§6Loading cache")
-		from plugins.bridge.hot_swap import HotSwapPlugin
-		hot_swap = self.bridge.core.get_plugin(HotSwapPlugin)
-		
-		if hot_swap:
-			# TODO make this a new process
-			hot_swap.load_cache()
-		else:
-			self.send_error("Failed to load cache. This is likely an error, please report this and save the logs.")
-		return
 	
 	
 	def send_error(self, message):

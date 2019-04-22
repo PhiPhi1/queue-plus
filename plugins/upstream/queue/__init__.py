@@ -28,22 +28,26 @@ class QueuePlugin(UpstreamPlugin):
 		
 		self.queue_listeners = []
 		
-		self.queue_message_bloat = ["Position in queue: "]
+		self.queue_messages = ["Position in queue: "]
 	
 	def packet_mirror_chat_message(self, buff):
 		chat_message = buff.unpack_chat().to_string(True)
 		_ = buff.unpack("b")
 		
-		if chat_message.lower().startswith("connecting"):
-			self.in_queue = False
-			self.queue_position = 0
-			self.queue_starting_position = 0
-			self.queue_update()
+		if chat_message.startswith("Connecting"):
+			self.remove_from_queue()
+		
+		is_queue_message = False
+		for message in self.queue_messages:
+			if chat_message.startswith(message):
+				is_queue_message = True
+		
+		if not is_queue_message:
 			return
 		
 		bloat_removed = chat_message
 		
-		for bloat in self.queue_message_bloat:
+		for bloat in self.queue_messages:
 			bloat_removed = bloat_removed.replace(bloat, "")
 			
 		if not bloat_removed.isdigit():
@@ -54,6 +58,13 @@ class QueuePlugin(UpstreamPlugin):
 			self.queue_starting_position = int(bloat_removed)
 			
 		self.queue_position = int(bloat_removed)
+		self.queue_update()
+		return
+		
+	def remove_from_queue(self):
+		self.in_queue = False
+		self.queue_position = 0
+		self.queue_starting_position = 0
 		self.queue_update()
 		return
 		
