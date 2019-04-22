@@ -22,14 +22,9 @@ from plugins.upstream import UpstreamPlugin
 
 
 class CachingPlugin(UpstreamPlugin):
-	packet_blacklist = []
-	packet_process = []
-	packet_static = []
-	loading_strategy = []
-	
 	# importing entity packets into namespace
 	from plugins.upstream.cache.entity import packet_mirror_attach_entity, packet_mirror_destroy_entities, packet_mirror_entity, packet_mirror_remove_entity_effect, \
-		packet_mirror_set_passengers, serialize_attach_entity, serialize_entity, serialize_remove_entity_effect, serialize_set_passengers
+		packet_mirror_set_passengers, serialize_attach_entity, serialize_entity, serialize_remove_entity_effect, serialize_set_passengers, packet_mirror_spawn_player, serialize_spawn_player
 	
 	# importing world packets into namespace
 	from plugins.upstream.cache.world import packet_mirror_block_change, packet_mirror_chunk_data, packet_mirror_multi_block_change, packet_mirror_unload_chunk, \
@@ -55,6 +50,11 @@ class CachingPlugin(UpstreamPlugin):
 	
 	
 	def __init__(self, *args, **kwargs):
+		self.packet_blacklist = []
+		self.packet_process = []
+		self.packet_static = []
+		self.loading_strategy = []
+		
 		self.data = []
 		self.static_data = {}
 		self.processed_data = {}

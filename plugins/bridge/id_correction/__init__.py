@@ -72,10 +72,12 @@ class IdCorrection(BridgePlugin):
 		return "continue"
 	
 	def packet_downstream_join_game(self, buff):
-		self.proxy_player_eid = buff.unpack("i")
+		p_player_eid = buff.unpack("i")
 		buff.discard()
 		
-		if self.proxy_player_eid == self.player_eid:
+		if p_player_eid == self.proxy_player_eid:
+			self.proxy_player_eid = p_player_eid
+		else:
 			return "continue"
 		
 		return "break"
