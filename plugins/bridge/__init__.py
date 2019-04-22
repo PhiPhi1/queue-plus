@@ -34,7 +34,8 @@ class BridgePlugin(Plugin):
 		
 		self.logger = logging.getLogger("Plugin %s (%s)" % (self.__class__.__name__, self.bridge.__class__.__name__))
 		self.logger.setLevel(self.config["plugins"]["log_level"])
-	
+		
+		self.setup()
 	
 	def packet_received(self, buff, direction, name):
 		self.mirror_packet(buff, direction, name)

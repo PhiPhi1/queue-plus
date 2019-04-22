@@ -26,9 +26,7 @@ class CoreProtocol:
 	def load_plugins(self, plugins):
 		self.protocol.logger.debug("Loading Plugins")
 		for index, plugin in enumerate(plugins):
-			init_pl = plugin(self.protocol, self.protocol.ticker)
-			init_pl.setup()
-			self.plugins.append(init_pl)
+			self.plugins.append(plugin(self.protocol, self.protocol.ticker))
 
 		return
 	

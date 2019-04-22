@@ -60,9 +60,9 @@ class AntiAfkPlugin(UpstreamPlugin):
 	def packet_mirror_player_position_and_look(self, buff):
 		x, y, z, _, _, _ = buff.unpack("dddffb")
 		tp_id = buff.unpack_varint()
-		buff.discard()
 		self.player_position = glm.vec3(x, y, z)
-		self.protocol.send_packet("teleport_confirm", self.buff_type.pack_varint(tp_id))
+		if self.running:
+			self.protocol.send_packet("teleport_confirm", self.buff_type.pack_varint(tp_id))
 		
 		self.ready = True
 		
@@ -79,6 +79,7 @@ class AntiAfkPlugin(UpstreamPlugin):
 	def start(self):
 		if self.ready:
 			self.running = True
+			self.queue_start = False
 			self.anti_afk_loop()
 		else:
 			self.queue_start = True
