@@ -60,6 +60,7 @@ def get_plugins():
 	# from plugins.bridge.waiting_server import WaitingServerPlugin
 	from plugins.bridge.queue_bossbar import QueueBossBarPlugin
 	from plugins.bridge.notifications import NotificationsPlugin
+	from plugins.bridge.anti_afk_controller import AntiAfkControllerPlugin
 	
 	return [
 		IdCorrection,
@@ -67,5 +68,6 @@ def get_plugins():
 		CommmandsPlugin,
 		# WaitingServerPlugin,
 		QueueBossBarPlugin,
-		NotificationsPlugin
+		NotificationsPlugin,
+		AntiAfkControllerPlugin
 	]

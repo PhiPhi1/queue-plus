@@ -43,10 +43,12 @@ def get_plugins():
 	from plugins.upstream.cache import CachingPlugin
 	from plugins.upstream.player_info import PlayerInfoPlugin
 	from plugins.upstream.queue import QueuePlugin
+	from plugins.upstream.anti_afk import AntiAfkPlugin
 	
 	return [
 		AlwaysAlivePlugin,
 		PlayerInfoPlugin,
 		QueuePlugin,
-		CachingPlugin
+		CachingPlugin,
+		AntiAfkPlugin
 	]
