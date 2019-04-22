@@ -108,7 +108,6 @@ class AntiAfkPlugin(UpstreamPlugin):
 		limit = self.config["walk"]["distance"]
 		direction = random.choice([glm.vec3(1, 0, 0), glm.vec3(-1, 0, 0), glm.vec3(0, 0, 1), glm.vec3(0, 0, -1)])
 		
-		global sequence
 		sequence = []
 		
 		for _ in range(limit * speed_divider):
@@ -121,18 +120,15 @@ class AntiAfkPlugin(UpstreamPlugin):
 			x, y, z = self.player_position = self.player_position - position
 			self.protocol.send_packet("player_position", self.buff_type.pack("ddd?", Decimal(x), Decimal(y), Decimal(z), True))
 		
-		
-		global index
-		index = 0
+		# Not defining the index in the namespace
+		# only making it part of the class because I dont want to use global
+		self.walk_cycle_index = 0
 		
 		def ticker_loop():
-			global index
-			global sequence
+			walk(sequence[self.walk_cycle_index])
 			
-			walk(sequence[index])
-			
-			if not index + 1 > sequence.__len__() - 1:
-				index += 1
+			if not self.walk_cycle_index + 1 > sequence.__len__() - 1:
+				self.walk_cycle_index += 1
 				self.ticker.add_delay(self.config["walk"]["speed"] / speed_divider, ticker_loop)
 			else:
 				self.walk_cycle_running = False
