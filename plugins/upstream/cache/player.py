@@ -36,3 +36,62 @@ def packet_mirror_player_position_and_look(self, buff):
 	new_buffer += buff.pack("dddffb", x, y, z, yaw, pitch, flags) + buff.pack_varint(-1)
 	self.static_data["player_position_and_look"] = new_buffer
 	return
+
+
+def packet_mirror_player_list_item(self, buff):
+	buff.save()
+	action = buff.unpack_varint()
+	
+	if not self.processed_data["player_list_item"]:
+		self.processed_data["player_list_item"] = {}
+	
+	for _ in range(buff.unpack_varint()):
+		uuid = buff.unpack_uuid()
+		if action == 0:
+			name = buff.unpack_string()
+			properties = {}
+			
+			for _ in range(buff.unpack_varint()):
+				p_name = buff.unpack_string()
+				properties[p_name] = {
+					"name": p_name
+				}
+				properties[p_name]["value"] = buff.unpack_string()
+				
+				if buff.unpack("?"):
+					properties[p_name]["sig"] = buff.unpack_string()
+			gamemode = buff.unpack_varint()
+			ping = buff.unpack_varint()
+			
+			if buff.unpack("?"):
+				disp_name = buff.unpack_chat()
+			else:
+				disp_name = None
+			
+			self.processed_data["player_list_item"][uuid] = {
+				"uuid": uuid,
+				"name": name,
+				"properties": properties,
+				"gamemode": gamemode,
+				"ping": ping,
+				"display": disp_name
+			}
+		elif action == 1:
+			self.processed_data["player_list_item"][uuid]["gamemode"] = buff.unpack_varint()
+		elif action == 2:
+			self.processed_data["player_list_item"][uuid]["ping"] = buff.unpack_varint()
+		elif action == 3:
+			if buff.unpack("?"):
+				self.processed_data["player_list_item"][uuid]["display"] = buff.unpack_chat()
+			else:
+				self.processed_data["player_list_item"][uuid]["display"] = None
+		elif action == 4:
+			del self.processed_data["player_list_item"][uuid]
+		
+		buff.discard()
+		return
+
+
+def serialize_player_list_item(self):
+	out = []
+	return out
