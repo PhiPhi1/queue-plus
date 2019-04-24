@@ -28,7 +28,7 @@ class IdCorrection(BridgePlugin):
 		
 		self.player_username = None
 		self.player_uuid = None
-		self.player_eid = 69
+		self.player_eid = None
 		
 		self.offline_mode = False
 		
@@ -53,6 +53,7 @@ class IdCorrection(BridgePlugin):
 		
 		self.offline_mode = (not self.config["client"]["online"]) or (not self.config["server"]["online"])
 		
+		self.player_eid = downstream_player_info.player_eid
 		self.player_username = downstream_player_info.player_username
 		self.player_uuid = downstream_player_info.player_uuid
 		return
