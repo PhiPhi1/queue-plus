@@ -30,7 +30,7 @@ def command_sessions(self, params):
 		username = player_info.player_username
 		
 		if (not username) and isinstance(session, TheVoidProtocol):
-			username = "Waiting Room"
+			username = "The Void"
 		
 		self.send_response("§a%s: %s" % (i, username))
 

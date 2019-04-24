@@ -51,26 +51,29 @@ def command_connect(self, params):
 	
 	
 def command_disconnect(self, params):
-	if not params.__len__() > 0 and not self.check_if_waiting_room():
-		self.bridge.upstream.close()
-		self.send_response("§cClosed current session")
+	if not params.__len__() > 0:
+		if not self.check_if_void():
+			self.bridge.upstream.close()
+			self.send_response("§cClosed current session")
+		else:
+			self.send_error("Cannot disconnect The Void")
 		return
 	
 	if params.__len__() > 1:
 		self.send_error("Incorrect syntax: [/disconnect <session id>]")
 		return
-	
+
 	if not params[0].isdigit():
 		self.send_error("Invalid session ID")
 		return
-	
+
 	session_index = int(params[0])
 	sessions = self.upstream_controller.sessions.protocols
-	
-	if not sessions.__len__() > session_index:
+
+	if not (sessions.__len__() > session_index):
 		self.send_error("Invalid session ID")
 		return
-	
+
 	self.send_response("§cClosed session %s" % session_index)
 	sessions[session_index].close()
 
@@ -85,10 +88,15 @@ def command_reconnect(self, params):
 		return
 	
 	account_index = int(params[0])
-	accounts = self.upstream_controller.account_loading.account_data
+	accounts = self.upstream_controller.accounts.account_data
 	
 	if not accounts.__len__() > account_index:
 		self.send_error("Invalid account ID")
 		return
 	
 	self.upstream_controller.load_account(accounts[account_index])
+
+
+def check_if_void(self):
+	from headless.upstream.protocol.the_void import TheVoidProtocol
+	return isinstance(self.bridge.upstream, TheVoidProtocol)

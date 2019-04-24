@@ -32,9 +32,8 @@ def command_showqueue(self, params):
 		self.send_response("§6Showing all queue boss bars")
 		for session in protocol_sessions:
 			queue_plugin = session.core.get_plugin(QueuePlugin)
-			if not queue_plugin.in_queue:
-				return
-			queue_bar.add_watched_protocol(session)
+			if queue_plugin.in_queue:
+				queue_bar.add_watched_protocol(session)
 		return
 	
 	session_index = params[0]
