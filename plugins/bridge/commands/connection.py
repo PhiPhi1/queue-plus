@@ -48,3 +48,47 @@ def command_connect(self, params):
 	else:
 		self.send_error("Failed to load cache. This is likely an error, please report this and save the logs.")
 	return
+	
+	
+def command_disconnect(self, params):
+	if not params.__len__() > 0 and not self.check_if_waiting_room():
+		self.bridge.upstream.close()
+		self.send_response("§cClosed current session")
+		return
+	
+	if params.__len__() > 1:
+		self.send_error("Incorrect syntax: [/disconnect <session id>]")
+		return
+	
+	if not params[0].isdigit():
+		self.send_error("Invalid session ID")
+		return
+	
+	session_index = int(params[0])
+	sessions = self.upstream_controller.sessions.protocols
+	
+	if not sessions.__len__() > session_index:
+		self.send_error("Invalid session ID")
+		return
+	
+	self.send_response("§cClosed session %s" % session_index)
+	sessions[session_index].close()
+
+
+def command_reconnect(self, params):
+	if not params.__len__() == 1:
+		self.send_error("Incorrect syntax: [/reconnect <account id>]")
+		return
+	
+	if not params[0].isdigit():
+		self.send_error("Invalid account ID")
+		return
+	
+	account_index = int(params[0])
+	accounts = self.upstream_controller.account_loading.account_data
+	
+	if not accounts.__len__() > account_index:
+		self.send_error("Invalid account ID")
+		return
+	
+	self.upstream_controller.load_account(accounts[account_index])
