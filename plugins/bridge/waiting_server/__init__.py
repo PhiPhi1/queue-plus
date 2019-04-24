@@ -36,9 +36,13 @@ class WaitingServerPlugin(BridgePlugin):
 			self.server_online = data["online"]
 		
 	def on_join(self):
-		if self.cooldown:
-			return
-		self.send_message("§9You can join the waiting server with /wait")
+		from headless.upstream.protocol.the_void import TheVoidProtocol
+		# will only show the message if not on cooldown and in the void
+		if self.cooldown is None and isinstance(self.bridge.upstream, TheVoidProtocol):
+			self.send_message("§9You can join the waiting server with /wait")
+		
+		# resets the cooldown timer
+		self.reset_cooldown()
 		return
 	
 	def on_leave(self):
@@ -68,7 +72,7 @@ class WaitingServerPlugin(BridgePlugin):
 		if self.cooldown:
 			self.ticker.remove(self.cooldown)
 			
-		cooldown_len = 500
+		cooldown_len = 120
 		self.cooldown = self.ticker.add_delay(cooldown_len, self.lift_cooldown)
 		return
 	
@@ -99,7 +103,6 @@ class WaitingServerPlugin(BridgePlugin):
 			self.waiting_session = protocol
 			
 			if hot_swap:
-				print("loading cache")
 				# TODO make this a new process
 				hot_swap.load_cache()
 		

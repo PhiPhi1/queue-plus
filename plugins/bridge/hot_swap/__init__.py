@@ -26,7 +26,6 @@ from plugins.upstream.cache import CachingPlugin
 
 class HotSwapPlugin(BridgePlugin, protocol.Protocol):
 	
-	# TODO: stagger cache loading
 	def load_cache(self):
 		cache = self.bridge.upstream.core.get_plugin(CachingPlugin)
 		cache_data = cache.concat_to_array()

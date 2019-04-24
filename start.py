@@ -23,7 +23,6 @@ from core.bridge.proxy import ProxyBridge
 from core.downstream.factory import DownstreamFactory
 from controllers.config import ConfigController
 
-# TODO: implement core startup here
 from controllers.upstream import UpstreamController
 
 

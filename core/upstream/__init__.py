@@ -19,8 +19,6 @@ from quarry.net.client import ClientProtocol
 
 from core import CoreProtocol
 
-# TODO: implement plugins
-# from plugins.upstream import get_plugins
 from plugins.upstream import get_plugins
 
 
