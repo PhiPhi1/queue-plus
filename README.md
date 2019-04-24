@@ -1,9 +1,9 @@
 # queue-plus
 5th refractory of the core code, this time implementing multiprocessing
 ## installation
-- install.md
+- [installation guide](https://github.com/the-emperium/queue-plus/blob/master/install.md)
 ## configuration
-- config.md
+- [configuration guide](https://github.com/the-emperium/queue-plus/blob/master/config.md)
 ## starting
  - open a command window inside the program folder
  - run ```python start.py```
