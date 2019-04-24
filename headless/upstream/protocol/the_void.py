@@ -28,7 +28,6 @@ class TheVoidProtocol(PseudoProtocol):
 		
 		from plugins.downstream.player_info import PlayerInfoPlugin
 		downstream_player_info = bridge.downstream.core.get_plugin(PlayerInfoPlugin)
-		print(downstream_player_info.player_eid)
 		
 		self.logger.debug("The void started")
 		

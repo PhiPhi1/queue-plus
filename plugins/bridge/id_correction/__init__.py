@@ -219,21 +219,45 @@ class IdCorrection(BridgePlugin):
 		buff.discard()
 		return "continue"
 	
-	# TODO plugin error packet_downstream_player_list_item maximum recursion depth exceeded while calling a Python object
 	def packet_downstream_player_list_item(self, buff):
 		buff.save()
-		_ = buff.unpack_varint()
+		action = buff.unpack_varint()
+		uuids = []
+		
 		for _ in range(buff.unpack_varint()):
-			uuid = buff.unpack_uuid()
-			buff.restore()
+			uuids.append(buff.unpack_uuid())
 			
-			if uuid == self.proxy_player_uuid:
-				old = self.buff_type.pack_uuid(uuid)
-				new = self.buff_type.pack_uuid(self.player_uuid)
+			# unpacks the rest of the buffer to complete the cycle
+			if action == 0:
+				buff.unpack_string()
+				for _ in range(buff.unpack_varint()):
+					buff.unpack_string()
+					buff.unpack_string()
+					
+					if buff.unpack("?"):
+						buff.unpack_string()
 				
-				buff.restore()
-				self.resend_parsed(buff, old, new, "downstream", "player_list_item")
-				return "break"
+				buff.unpack_varint()
+				buff.unpack_varint()
+				
+				if buff.unpack("?"):
+					buff.unpack_chat()
+			
+			elif action == 1:
+				buff.unpack_varint()
+			elif action == 2:
+				buff.unpack_varint()
+			elif action == 3:
+				if buff.unpack("?"):
+					buff.unpack_chat()
+		
+		if self.proxy_player_uuid in uuids:
+			old = self.buff_type.pack_uuid(self.proxy_player_uuid)
+			new = self.buff_type.pack_uuid(self.player_uuid)
+			
+			buff.restore()
+			self.resend_parsed(buff, old, new, "downstream", "player_list_item")
+			return "break"
 		
 		buff.discard()
 		return "continue"

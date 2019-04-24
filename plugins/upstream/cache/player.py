@@ -48,8 +48,8 @@ def packet_mirror_player_list_item(self, buff):
 	for _ in range(buff.unpack_varint()):
 		uuid = buff.unpack_uuid()
 		
-		if uuid.to_hex() not in self.processed_data["player_list_item"]:
-			self.processed_data["player_list_item"][uuid.to_hex()] = {}
+		if uuid not in self.processed_data["player_list_item"]:
+			self.processed_data["player_list_item"][uuid] = {}
 
 		if action == 0:
 			name = buff.unpack_string()
@@ -73,7 +73,7 @@ def packet_mirror_player_list_item(self, buff):
 			else:
 				disp_name = None
 			
-			self.processed_data["player_list_item"][uuid.to_hex()] = {
+			self.processed_data["player_list_item"][uuid] = {
 				"uuid": uuid,
 				"name": name,
 				"properties": properties,
@@ -82,16 +82,16 @@ def packet_mirror_player_list_item(self, buff):
 				"display": disp_name
 			}
 		elif action == 1:
-			self.processed_data["player_list_item"][uuid.to_hex()]["gamemode"] = buff.unpack_varint()
+			self.processed_data["player_list_item"][uuid]["gamemode"] = buff.unpack_varint()
 		elif action == 2:
-			self.processed_data["player_list_item"][uuid.to_hex()]["ping"] = buff.unpack_varint()
+			self.processed_data["player_list_item"][uuid]["ping"] = buff.unpack_varint()
 		elif action == 3:
 			if buff.unpack("?"):
-				self.processed_data["player_list_item"][uuid.to_hex()]["display"] = buff.unpack_chat()
+				self.processed_data["player_list_item"][uuid]["display"] = buff.unpack_chat()
 			else:
-				self.processed_data["player_list_item"][uuid.to_hex()]["display"] = None
+				self.processed_data["player_list_item"][uuid]["display"] = None
 		elif action == 4:
-			del self.processed_data["player_list_item"][uuid.to_hex()]
+			del self.processed_data["player_list_item"][uuid]
 		
 		buff.discard()
 		return

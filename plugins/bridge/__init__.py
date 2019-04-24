@@ -70,5 +70,5 @@ def get_plugins():
 		# WaitingServerPlugin,
 		QueueBossBarPlugin,
 		NotificationsPlugin,
-		AntiAfkControllerPlugin
+		AntiAfkControllerPlugin,
 	]

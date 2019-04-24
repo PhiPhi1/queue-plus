@@ -32,4 +32,4 @@ class PlayerInfoPlugin(DownstreamPlugin):
 		self.player_username = self.protocol.display_name
 		self.player_uuid = self.protocol.uuid
 		return
-	
+
