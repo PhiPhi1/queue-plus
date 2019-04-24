@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (packets.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -17,18 +17,32 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
+def packet_received(self, buff, name):
+	buff.save()
 	
+	dispatched = self.core.route_packet_to_plugins(buff, name)
 	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
-		return
+	if not dispatched:
+		for bridge in self.factory.bridges:
+			if bridge.forwarding:
+				buff.restore()
+				bridge.packet_received(buff, self.recv_direction, name)
+		
+		if not self.factory.bridges.__len__() > 0:
+			buff.restore()
+			self.super_handle_packet(buff, name)
 	
+	buff.discard()
+	return
+
+
+def log_packet(self, prefix, name):
+	forwarding = ""
 	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
-		return
+	if self.factory.bridges.__len__() > 0 and self.protocol_mode == "recv":
+		forwarding = "%s %s bridges " % (prefix, self.factory.bridges.__len__())
+	
+	message = "Packet %s%s %s/%s" % (forwarding, prefix, self.protocol_mode, name)
+	
+	self.logger.debug(message)
+	return

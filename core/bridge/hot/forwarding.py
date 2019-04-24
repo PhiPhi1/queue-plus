@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (forwarding.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -16,19 +16,29 @@
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
+		
+def enable_forwarding(self):
+	self.forwarding = True
+	
+	self.logger.debug("forwarding enabled")
+	
+	if self.upstream.factory.request_control(self):
+		self.logger.info("Has control of protocol")
+	else:
+		self.logger.info("Does not have control of protocol")
+	return
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
+
+def disable_forwarding(self):
+	self.forwarding = False
 	
+	if self.upstream and (not self.upstream.closed) and (self in self.upstream.factory.bridges):
+		self.upstream.remove_forwarding_bridge(self)
 	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
-		return
-	
-	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
-		return
+	self.logger.debug("forwarding disabled sucessfully")
+	return
+
+
+# noinspection PyUnusedLocal
+def enable_fast_forwarding(self):
+	raise Exception("Fast forwarding is not available for hot swappable bridges")

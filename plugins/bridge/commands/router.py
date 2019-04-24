@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (router.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -17,18 +17,15 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
-	
-	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
-		return
-	
-	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
-		return
+def route_command(self, command_string):
+	command = command_string.split(" ")[0]
+	method_pointer = "command_%s" % command
+	handler = getattr(self, method_pointer, None)
+	if handler:
+		try:
+			handler(self.get_params(command, command_string))
+		except Exception as e:
+			print("command error", method_pointer, e)
+		return "finish"
+	else:
+		return "continue"

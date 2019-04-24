@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (__init__.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -15,20 +15,39 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from plugins.downstream import DownstreamPlugin
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
+# noinspection PyMethodMayBeStatic
+class AlwaysAlivePlugin(DownstreamPlugin):
+	def __init__(self, *args, **kwargs):
+		super(AlwaysAlivePlugin, self).__init__(*args, **kwargs)
+		
+		self.alive_task = None
 	
 	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
+	def on_join(self):
+		self.alive_task = self.ticker.add_loop(20, self.update_keep_alive)
 		return
 	
 	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
+	def on_leave(self):
+		self.ticker.remove(self.alive_task)
 		return
+	
+	def update_keep_alive(self):
+		# 1.7.x
+		if self.config["version"] <= 338:
+			payload = self.buff_type.pack_varint(0)
+		
+		# 1.12.2
+		else:
+			payload = self.buff_type.pack('Q', 0)
+		
+		self.send_packet("keep_alive", payload)
+		return
+	
+	# discards all the keep alive packets sent
+	def packet_keep_alive(self, buff):
+		buff.discard()
+		return "break"

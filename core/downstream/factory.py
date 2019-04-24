@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (factory.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -15,20 +15,15 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from quarry.net.proxy import DownstreamFactory as _DownstreamFactory
+
+from controllers.config import ConfigController
+from core.downstream import DownstreamProtocol
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
+class DownstreamFactory(_DownstreamFactory):
+	config = ConfigController.instance().data
+	protocol = DownstreamProtocol
 	
-	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
-		return
-	
-	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
-		return
+	log_level = config["server"]["log_level"]
+	online_mode = config["server"]["online"]

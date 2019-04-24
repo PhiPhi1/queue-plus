@@ -23,7 +23,6 @@ from core.bridge.proxy import ProxyBridge
 from core.downstream.factory import DownstreamFactory
 from controllers.config import ConfigController
 
-# TODO: implement core startup here
 from controllers.upstream import UpstreamController
 
 
@@ -32,7 +31,7 @@ def main():
 	config = ConfigController.instance().data
 	
 	# Initializes the upstream controller
-	upstream_controller = UpstreamController.instance()
+	UpstreamController.instance()
 
 	# Create factory
 	factory = DownstreamFactory()
@@ -49,4 +48,5 @@ def main():
 	
 if __name__ == "__main__":
 	main()
+	# noinspection PyUnresolvedReferences
 	reactor.run()

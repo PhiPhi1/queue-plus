@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (waiting_room.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -17,18 +17,30 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
-	
-	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
+def command_wait(self, params):
+	if params.__len__() is not 1 and params.__len__() is not 0:
+		self.send_error("[/wait <account id>]")
 		return
 	
+	if params.__len__() is 0:
+		account_index = 0
+	else:
+		account_index = params[0]
+		
+		if not account_index.isdigit():
+			self.send_error("Invalid account ID")
+			return
 	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
+	account_index = int(account_index)
+	
+	accounts = self.upstream_controller.accounts.account_data
+	if not accounts.__len__() > account_index:
+		if accounts.__len__() is 0:
+			self.send_error("There are no accounts configured")
+		else:
+			self.send_error("Invalid account ID")
 		return
+	
+	from plugins.bridge.waiting_server import WaitingServerPlugin
+	waiting_server = self.bridge.core.get_plugin(WaitingServerPlugin)
+	waiting_server.join_server(account_index)

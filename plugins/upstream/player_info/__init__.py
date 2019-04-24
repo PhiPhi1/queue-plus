@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (__init__.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -15,20 +15,26 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from quarry.types.uuid import UUID
+
+from plugins.upstream import UpstreamPlugin
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
+class PlayerInfoPlugin(UpstreamPlugin):
 	
+	def __init__(self, *args, **kwargs):
+		super(PlayerInfoPlugin, self).__init__(*args, **kwargs)
 	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
+		self.player_eid = None
+		self.player_username = None
+		self.player_uuid = None
+	
+	def packet_mirror_join_game(self, buff):
+		self.player_eid = buff.unpack("i")
+		buff.discard()
 		return
 	
-	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
+	def packet_mirror_login_success(self, buff):
+		self.player_uuid = UUID.from_hex(buff.unpack_string())
+		self.player_username = buff.unpack_string()
 		return

@@ -15,30 +15,30 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from quarry.net.protocol import ProtocolError
+from quarry.types.buffer import BufferUnderrun
+
+from twisted.internet import protocol
+
+from plugins.bridge import BridgePlugin
+from plugins.upstream.cache import CachingPlugin
 
 
-class Controller:
-	def __init__(self, decorated):
-		self._decorated = decorated
+class HotSwapPlugin(BridgePlugin, protocol.Protocol):
 	
-	
-	def instance(self):
-		try:
-			return self._instance
-		except AttributeError:
-			# noinspection PyAttributeOutsideInit
-			self._instance = self._decorated()
-			return self._instance
-	
-	
-	def __call__(self):
-		raise TypeError('Singletons must be accessed through `instance()`.')
-	
-	
-	def __instancecheck__(self, inst):
-		return isinstance(inst, self._decorated)
-	
-	
-	def setup(self):
+	def load_cache(self):
+		cache = self.bridge.upstream.core.get_plugin(CachingPlugin)
+		cache_data = cache.concat_to_array()
+		
+		for index, (name, buff) in enumerate(cache_data):
+			# self.bridge.downstream.send_packet(name, buff)
+			unpacked_buff = self.buff_type(buff)
+			
+			try:
+				self.bridge.packet_received(unpacked_buff, "downstream", name)
+			except BufferUnderrun:
+				raise ProtocolError("Packet is too short: %s" % name)
+			if len(unpacked_buff) > 0:
+				raise ProtocolError("Packet is too long: %s" % name)
+			
 		return
-

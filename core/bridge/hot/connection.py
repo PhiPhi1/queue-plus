@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (sessions.py) is part of Queue Plus.
+#      This file (connection.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -17,18 +17,23 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-class Sessions:
-	def __init__(self):
-		self.protocols = []
-	
-	
-	def add_session(self, protocol):
-		self.protocols.append(protocol)
+def connect(self):
+	self.send_to_the_void()
+	return
+
+
+def downstream_disconnected(self):
+	if not self.upstream:
 		return
 	
-	
-	def remove_session(self, protocol):
-		while protocol in self.protocols:
-			self.protocols.remove(protocol)
-		del protocol
-		return
+	if self.upstream and self.upstream.factory.check_permission(self) and not self.config["safe_disconnect"]:
+		self.upstream.close()
+	return
+
+
+def upstream_disconnected(self):
+	self.disable_forwarding()
+	if not self.switching_protocol:
+		self.send_to_the_void()
+	self.logger.debug("upstream disconnected")
+	return
