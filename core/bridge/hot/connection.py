@@ -33,6 +33,7 @@ def downstream_disconnected(self):
 
 def upstream_disconnected(self):
 	self.disable_forwarding()
-	self.send_to_the_void()
+	if not self.switching_protocol:
+		self.send_to_the_void()
 	self.logger.debug("upstream disconnected")
 	return

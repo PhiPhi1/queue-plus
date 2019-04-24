@@ -60,11 +60,6 @@ class UpstreamProtocol(ClientProtocol):
 		
 		self.core.on_leave_plugins()
 		self.core.unload_plugins()
-		
-		for bridge in self.factory.bridges:
-			# noinspection PyArgumentList
-			self.remove_forwarding_bridge(bridge)
-			bridge.upstream_disconnected()
 	
 	def close(self, reason=None):
 		if not self.in_game and self.factory.protocol_callback:
@@ -72,6 +67,11 @@ class UpstreamProtocol(ClientProtocol):
 				self.factory.protocol_callback(self)
 			except Exception as e:
 				print("Error in protocol callback", e)
+		
+		for bridge in self.factory.bridges:
+			# noinspection PyArgumentList
+			self.remove_forwarding_bridge(bridge)
+			bridge.upstream_disconnected()
 				
 		super(UpstreamProtocol, self).close(reason)
 		self.factory.stopTrying()

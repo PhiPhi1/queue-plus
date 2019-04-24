@@ -29,12 +29,14 @@ def switch_protocol(self, protocol):
 	self.logger.debug("switching protocol")
 	
 	# checks if protocol is the same and if its set
-	if protocol and protocol == self.upstream:
-		self.logger.info("same_connection, You are already connected to this account")
-		return
+	# removed so the user can refresh the connection
+	# if protocol and protocol == self.upstream:
+	# 	self.logger.info("same_connection, You are already connected to this account")
+	# 	return
 	
 	self.disable_forwarding()
 	protocol.add_forwarding_bridge(self)
+	self.switching_protocol = False
 	return
 
 
