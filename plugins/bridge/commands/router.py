@@ -29,3 +29,51 @@ def route_command(self, command_string):
 		return "finish"
 	else:
 		return "continue"
+
+
+def command_phelp(self, params):
+	commands = [
+		{
+			"command": "phelp",
+			"description": "shows all commands"
+		},
+		{
+			"command": "connect <session id>",
+			"description": "connect to a session"
+		},
+		{
+			"command": "sessions",
+			"description": "lists all sessions"
+		},
+		{
+			"command": "accounts",
+			"description": "lists all accounts"
+		},
+		{
+			"command": "showqueue [<session id>]",
+			"description": "shows a queue boss bar"
+		},
+		{
+			"command": "hidequeue [<session id>]",
+			"description": "hides a queue boss bar"
+		},
+		{
+			"command": "wait [<account id>]",
+			"description": "connects to a separate \"waiting\" server"
+		},
+		{
+			"command": "disconnect [<session id>]",
+			"description": "manually disconnect a session"
+		},
+		{
+			"command": "reconnect [<account id>]",
+			"description": "manually reconnect an account"
+		}
+	]
+	
+	self.send_response("§6======================================")
+	
+	for command in commands:
+		self.send_response("§a/%s: §r%s" % (command["command"], command["description"]))
+	
+	self.send_response("§6======================================")

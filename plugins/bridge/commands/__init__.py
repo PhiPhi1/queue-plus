@@ -19,7 +19,7 @@ from plugins.bridge import BridgePlugin
 
 
 class CommmandsPlugin(BridgePlugin):
-	from plugins.bridge.commands.router import route_command
+	from plugins.bridge.commands.router import route_command, command_phelp
 	from plugins.bridge.commands.connection import command_connect, command_disconnect, command_reconnect, check_if_void
 	from plugins.bridge.commands.lists import command_accounts, command_sessions
 	from plugins.bridge.commands.queue import command_hidequeue, command_showqueue
