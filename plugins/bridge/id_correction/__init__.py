@@ -28,7 +28,7 @@ class IdCorrection(BridgePlugin):
 		
 		self.player_username = None
 		self.player_uuid = None
-		self.player_eid = 69
+		self.player_eid = None
 		
 		self.offline_mode = False
 		
@@ -53,6 +53,7 @@ class IdCorrection(BridgePlugin):
 		
 		self.offline_mode = (not self.config["client"]["online"]) or (not self.config["server"]["online"])
 		
+		self.player_eid = downstream_player_info.player_eid
 		self.player_username = downstream_player_info.player_username
 		self.player_uuid = downstream_player_info.player_uuid
 		return
@@ -217,21 +218,46 @@ class IdCorrection(BridgePlugin):
 		
 		buff.discard()
 		return "continue"
-
+	
 	def packet_downstream_player_list_item(self, buff):
 		buff.save()
-		_ = buff.unpack_varint()
+		action = buff.unpack_varint()
+		uuids = []
+		
 		for _ in range(buff.unpack_varint()):
-			uuid = buff.unpack_uuid()
-			buff.restore()
+			uuids.append(buff.unpack_uuid())
 			
-			if uuid == self.proxy_player_uuid:
-				old = self.buff_type.pack_uuid(uuid)
-				new = self.buff_type.pack_uuid(self.player_uuid)
+			# unpacks the rest of the buffer to complete the cycle
+			if action == 0:
+				buff.unpack_string()
+				for _ in range(buff.unpack_varint()):
+					buff.unpack_string()
+					buff.unpack_string()
+					
+					if buff.unpack("?"):
+						buff.unpack_string()
 				
-				buff.restore()
-				self.resend_parsed(buff, old, new, "downstream", "player_list_item")
-				return "break"
+				buff.unpack_varint()
+				buff.unpack_varint()
+				
+				if buff.unpack("?"):
+					buff.unpack_chat()
+			
+			elif action == 1:
+				buff.unpack_varint()
+			elif action == 2:
+				buff.unpack_varint()
+			elif action == 3:
+				if buff.unpack("?"):
+					buff.unpack_chat()
+		
+		if self.proxy_player_uuid in uuids:
+			old = self.buff_type.pack_uuid(self.proxy_player_uuid)
+			new = self.buff_type.pack_uuid(self.player_uuid)
+			
+			buff.restore()
+			self.resend_parsed(buff, old, new, "downstream", "player_list_item")
+			return "break"
 		
 		buff.discard()
 		return "continue"

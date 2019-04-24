@@ -11,6 +11,8 @@ update_block_entity
 block_change
 multi_block_change
 
+player_list_item
+
 spawn_player
 spawn_painting
 spawn_mob

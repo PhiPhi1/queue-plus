@@ -15,7 +15,7 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-
+from quarry.types.uuid import UUID
 
 from quarry.net.proxy import Downstream
 from quarry.net.server import ServerProtocol
@@ -29,6 +29,7 @@ class DownstreamProtocol(Downstream):
 	
 	def __init__(self, *args, **kwargs):
 		self.core = CoreProtocol(self)
+		self._uuid = UUID.random()
 		
 		super(DownstreamProtocol, self).__init__(*args, **kwargs)
 	
@@ -45,6 +46,7 @@ class DownstreamProtocol(Downstream):
 		return
 	
 	def player_joined(self):
+		self.uuid = self._uuid
 		super(DownstreamProtocol, self).player_joined()
 		self.core.on_join_plugins()
 		return

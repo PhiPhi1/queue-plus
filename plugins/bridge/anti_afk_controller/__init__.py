@@ -22,15 +22,15 @@ from plugins.bridge import BridgePlugin
 
 class AntiAfkControllerPlugin(BridgePlugin):
 	def on_join(self):
-		from plugins.upstream.anti_afk import AntiAfkPlugin
 		if hasattr(self.bridge.upstream, "core"):
+			from plugins.upstream.anti_afk import AntiAfkPlugin
 			anti_afk = self.bridge.upstream.core.get_plugin(AntiAfkPlugin)
 			if anti_afk:
 				anti_afk.stop()
-		
+			
 	def on_leave(self):
-		from plugins.upstream.anti_afk import AntiAfkPlugin
 		if hasattr(self.bridge.upstream, "core"):
+			from plugins.upstream.anti_afk import AntiAfkPlugin
 			anti_afk = self.bridge.upstream.core.get_plugin(AntiAfkPlugin)
 			if anti_afk:
 				anti_afk.start()

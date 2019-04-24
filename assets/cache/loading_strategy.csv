@@ -9,6 +9,8 @@ declare_recipes
 declare_commands
 unlock_recipes
 
+player_list_item
+
 teams
 scoreboard_objective
 display_scoreboard

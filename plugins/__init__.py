@@ -21,6 +21,9 @@ from controllers.config import ConfigController
 
 
 class Plugin:
+	protocol = None
+	ticker = None
+	
 	config = ConfigController.instance().data
 	
 	
@@ -32,6 +35,8 @@ class Plugin:
 		
 		self.logger = logging.getLogger("Plugin %s (%s)" % (self.__class__.__name__, self.protocol.__class__.__name__))
 		self.logger.setLevel(self.config["plugins"]["log_level"])
+		
+		self.setup()
 	
 	# return with false to emulate mirroring
 	#

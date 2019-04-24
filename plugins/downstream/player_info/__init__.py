@@ -15,6 +15,8 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+import random
+
 from plugins.downstream import DownstreamPlugin
 
 
@@ -22,6 +24,7 @@ class PlayerInfoPlugin(DownstreamPlugin):
 	def __init__(self, *args, **kwargs):
 		super(PlayerInfoPlugin, self).__init__(*args, **kwargs)
 		
+		self.player_eid = random.randint(2047483647, 2147483646)
 		self.player_username = None
 		self.player_uuid = None
 		
@@ -29,3 +32,4 @@ class PlayerInfoPlugin(DownstreamPlugin):
 		self.player_username = self.protocol.display_name
 		self.player_uuid = self.protocol.uuid
 		return
+
