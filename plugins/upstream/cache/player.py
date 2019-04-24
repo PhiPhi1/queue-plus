@@ -64,6 +64,8 @@ def packet_mirror_player_list_item(self, buff):
 				
 				if buff.unpack("?"):
 					properties[p_name]["sig"] = buff.unpack_string()
+				else:
+					properties[p_name]["sig"] = None
 					
 			gamemode = buff.unpack_varint()
 			ping = buff.unpack_varint()
@@ -100,26 +102,31 @@ def packet_mirror_player_list_item(self, buff):
 def serialize_player_list_item(self):
 	out = []
 	for uuid in self.processed_data["player_list_item"]:
+		player_item = self.processed_data["player_list_item"][uuid]
+		if not ("uuid" in player_item and "name" in player_item and "properties" in player_item and "gamemode" in player_item and "ping" in player_item and "ping" in player_item):
+			continue
+			
 		serialized = b""
 		serialized += self.buff_type.pack_varint(0)
 		serialized += self.buff_type.pack_varint(1)
 		
-		serialized += self.buff_type.pack_uuid(self.processed_data["player_list_item"][uuid]["uuid"])
-		serialized += self.buff_type.pack_string(self.processed_data["player_list_item"][uuid]["name"])
-		serialized += self.buff_type.pack_varint(len(self.processed_data["player_list_item"][uuid]["properties"]))
+		serialized += self.buff_type.pack_uuid(player_item["uuid"])
+		serialized += self.buff_type.pack_string(player_item["name"])
+		serialized += self.buff_type.pack_varint(len(player_item["properties"]))
 		
-		for prop in self.processed_data["player_list_item"][uuid]["properties"]:
-			serialized += self.buff_type.pack_string(self.processed_data["player_list_item"][uuid]["properties"][prop]["name"])
-			serialized += self.buff_type.pack_string(self.processed_data["player_list_item"][uuid]["properties"][prop]["value"])
-			serialized += self.buff_type.pack("?", self.processed_data["player_list_item"][uuid]["properties"][prop]["sig"] is not None)
-			if self.processed_data["player_list_item"][uuid]["properties"][prop]["sig"] is not None:
-				serialized += self.buff_type.pack_string(self.processed_data["player_list_item"][uuid]["properties"][prop]["sig"])
-		
-		serialized += self.buff_type.pack_varint(self.processed_data["player_list_item"][uuid]["gamemode"])
-		serialized += self.buff_type.pack_varint(self.processed_data["player_list_item"][uuid]["ping"])
-		serialized += self.buff_type.pack("?", self.processed_data["player_list_item"][uuid]["display"] is not None)
-		if self.processed_data["player_list_item"][uuid]["display"] is not None:
-			serialized += self.buff_type.pack_chat(self.processed_data["player_list_item"][uuid]["display"])
+		for prop in player_item["properties"]:
+			serialized += self.buff_type.pack_string(player_item["properties"][prop]["name"])
+			serialized += self.buff_type.pack_string(player_item["properties"][prop]["value"])
+			serialized += self.buff_type.pack("?", player_item["properties"][prop]["sig"] is not None)
+			if player_item["properties"][prop]["sig"] is not None:
+				signature = player_item["properties"][prop]["sig"]
+				serialized += self.buff_type.pack_string(signature)
+				
+		serialized += self.buff_type.pack_varint(player_item["gamemode"])
+		serialized += self.buff_type.pack_varint(player_item["ping"])
+		serialized += self.buff_type.pack("?", player_item["display"] is not None)
+		if player_item["display"] is not None:
+			serialized += self.buff_type.pack_chat(player_item["display"])
 		
 		out.append(("player_list_item", serialized))
 	return out

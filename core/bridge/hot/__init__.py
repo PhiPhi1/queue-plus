@@ -41,6 +41,8 @@ class HotBridge(Bridge):
 		self.forwarding = False
 		self.joined_game = False
 		
+		self.switching_protocol = False
+		
 		super(HotBridge, self).__init__(*args, **kwargs)
 	
 	

@@ -36,9 +36,13 @@ class WaitingServerPlugin(BridgePlugin):
 			self.server_online = data["online"]
 		
 	def on_join(self):
-		if self.cooldown:
-			return
-		self.send_message("§9You can join the waiting server with /wait")
+		from headless.upstream.protocol.the_void import TheVoidProtocol
+		# will only show the message if not on cooldown and in the void
+		if self.cooldown is None and isinstance(self.bridge.upstream, TheVoidProtocol):
+			self.send_message("§9You can join the waiting server with /wait")
+		
+		# resets the cooldown timer
+		self.reset_cooldown()
 		return
 	
 	def on_leave(self):
@@ -53,7 +57,7 @@ class WaitingServerPlugin(BridgePlugin):
 
 		self.send_message("§aConnecting to Waiting Server")
 		
-		accounts = self.upstream_controller.account_loading.account_data
+		accounts = self.upstream_controller.accounts.account_data
 		self.upstream_controller.load_custom_connection(accounts[account_id], self.server_host, self.server_port, self.server_online, self.join_when_ready)
 		self.session_account_id = account_id
 		return
@@ -68,7 +72,7 @@ class WaitingServerPlugin(BridgePlugin):
 		if self.cooldown:
 			self.ticker.remove(self.cooldown)
 			
-		cooldown_len = 150
+		cooldown_len = 120
 		self.cooldown = self.ticker.add_delay(cooldown_len, self.lift_cooldown)
 		return
 	
@@ -82,8 +86,27 @@ class WaitingServerPlugin(BridgePlugin):
 		return
 	
 	def join_when_ready(self, protocol):
-		self.bridge.switch_protocol(protocol)
-		self.waiting_session = protocol
+		if not protocol.in_game:
+			if protocol.disconnect_message:
+				self.send_message("§cConnection failed with message:")
+				self.send_message("§c" + protocol.disconnect_message.to_string(False).strip())
+			else:
+				self.send_message("§cConnection failed")
+			return
 		
-		# self.ticker.add_delay(40, delay_callback)
+		
+		def load_cache():
+			from plugins.bridge.hot_swap import HotSwapPlugin
+			hot_swap = self.bridge.core.get_plugin(HotSwapPlugin)
+			
+			self.bridge.switch_protocol(protocol)
+			self.waiting_session = protocol
+			
+			if hot_swap:
+				# TODO make this a new process
+				hot_swap.load_cache()
+		
+		# adds a small delay to account for the cache
+		# TODO change it so that loading cache is not required
+		self.ticker.add_delay(50, load_cache)
 		return

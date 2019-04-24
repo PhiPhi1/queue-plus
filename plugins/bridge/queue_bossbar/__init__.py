@@ -93,7 +93,6 @@ class QueueBossBarPlugin(BridgePlugin):
 			self.create_boss_bar(session)
 		
 		if session not in self.watched_protocols:
-			# TODO remove from callbacks
 			upstream_queue.remove_queue_listener(self.watched_protocols[session]["callback"])
 			return
 		

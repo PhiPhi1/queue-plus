@@ -36,6 +36,7 @@ def command_connect(self, params):
 		return
 	
 	self.send_response("§6Switching sessions")
+	self.bridge.switching_protocol = True
 	self.bridge.switch_protocol(sessions[session_index])
 	
 	self.send_response("§6Loading cache")
