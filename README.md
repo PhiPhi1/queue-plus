@@ -12,6 +12,7 @@ version: ALPHA v0.2
 - auto-reconnect
 
 ### commands:
+- ```/phelp```: lists all commands
 - ```/connect <session id>```: switch to another session 
 - ```/sessions```: lists all sessions by id and name
 - ```/accounts```: list all accounts by id and name
