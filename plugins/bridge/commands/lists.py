@@ -17,7 +17,7 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-def command_sessions(self):
+def command_sessions(self, params):
 	protocol_sessions = self.upstream_controller.sessions.protocols
 	from plugins.upstream.player_info import PlayerInfoPlugin
 	from headless.upstream.protocol.the_void import TheVoidProtocol
@@ -35,7 +35,7 @@ def command_sessions(self):
 		self.send_response("§a%s: %s" % (i, username))
 
 
-def command_accounts(self):
+def command_accounts(self, params):
 	accounts = self.upstream_controller.accounts.account_data
 	
 	if accounts.__len__() > 0:

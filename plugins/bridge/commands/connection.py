@@ -15,7 +15,13 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+
+
 def command_connect(self, params):
+	if params.__len__() is not 1:
+		self.send_error("Expected 1 variable [/connect <session id>]")
+		return
+	
 	session_index = params[0]
 	
 	if not session_index.isdigit():

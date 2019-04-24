@@ -62,6 +62,9 @@ class QueueBossBarPlugin(BridgePlugin):
 			del self.watched_protocols[session]
 		
 		self.bridge.packet_received(self.buff_type(self.buff_type.pack_uuid(session_metadata["uuid"]) + self.buff_type.pack_varint(1)), "downstream", "boss_bar")
+		
+		# sending an update to make sure that the client knows that it has been removed
+		self.bridge.packet_received(self.buff_type(self.buff_type.pack_uuid(session_metadata["uuid"]) + self.buff_type.pack_varint(2) + self.buff_type.pack("f", 0)), "downstream", "boss_bar")
 	
 	def create_boss_bar(self, session):
 		if self.watched_protocols[session]["spawned"]:

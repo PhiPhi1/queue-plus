@@ -17,7 +17,11 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-def command_show_queue(self, params):
+def command_showqueue(self, params):
+	if params.__len__() > 1:
+		self.send_error("Expected 0 or 1 variables [/showqueue <session id>]")
+		return
+	
 	from plugins.upstream.queue import QueuePlugin
 	protocol_sessions = self.upstream_controller.sessions.protocols
 	
@@ -59,7 +63,11 @@ def command_show_queue(self, params):
 	queue_bar.add_watched_protocol(session)
 
 
-def command_hide_queue(self, params):
+def command_hidequeue(self, params):
+	if params.__len__() > 1:
+		self.send_error("Expected 0 or 1 variables [/hidequeue <session id>]")
+		return
+	
 	protocol_sessions = self.upstream_controller.sessions.protocols
 	
 	from plugins.bridge.queue_bossbar import QueueBossBarPlugin
@@ -67,8 +75,8 @@ def command_hide_queue(self, params):
 	
 	if params.__len__() is 0:
 		self.send_response("§6Hiding all queue boss bars")
-		for session in protocol_sessions:
-			queue_bar.removed_watched_protocol(session)
+		for session in list(queue_bar.watched_protocols):
+			queue_bar.removed_watched_protocol(queue_bar.watched_protocols[session]["protocol"])
 		return
 	
 	session_index = params[0]

@@ -15,39 +15,17 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-# TODO: clean up code
+
+
 def route_command(self, command_string):
-	if command_string.startswith("connect"):
-		params = self.get_params("connect", command_string)
-		
-		if params.__len__() is not 1:
-			self.send_error("Expected 1 variable [/connect <session id>]")
-			return "finish"
-		
-		self.command_connect(params)
+	command = command_string.split(" ")[0]
+	method_pointer = "command_%s" % command
+	handler = getattr(self, method_pointer, None)
+	if handler:
+		try:
+			handler(self.get_params(command, command_string))
+		except Exception as e:
+			print("command error", method_pointer, e)
 		return "finish"
-	elif command_string.startswith("showqueue"):
-		params = self.get_params("showqueue", command_string)
-		
-		if params.__len__() > 1:
-			self.send_error("Expected 0 or 1 variables [/showqueue <session id>]")
-			return "finish"
-		
-		self.command_show_queue(params)
-		return "finish"
-	elif command_string.startswith("hidequeue"):
-		params = self.get_params("hidequeue", command_string)
-		
-		if params.__len__() > 1:
-			self.send_error("Expected 0 or 1 variables [/hidequeue <session id>]")
-			return "finish"
-		
-		self.command_hide_queue(params)
-		return "finish"
-	elif command_string.startswith("sessions"):
-		self.command_sessions()
-		return "finish"
-	elif command_string.startswith("accounts"):
-		self.command_accounts()
-		return "finish"
-	return "continue"
+	else:
+		return "continue"

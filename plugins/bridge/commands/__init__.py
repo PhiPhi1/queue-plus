@@ -22,7 +22,7 @@ class CommmandsPlugin(BridgePlugin):
 	from plugins.bridge.commands.router import route_command
 	from plugins.bridge.commands.connection import command_connect
 	from plugins.bridge.commands.lists import command_accounts, command_sessions
-	from plugins.bridge.commands.queue import command_hide_queue, command_show_queue
+	from plugins.bridge.commands.queue import command_hidequeue, command_showqueue
 	
 	def packet_upstream_chat_message(self, buff):
 		message = buff.unpack_string()
