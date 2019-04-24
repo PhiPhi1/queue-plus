@@ -30,6 +30,7 @@ class UpstreamProtocol(ClientProtocol):
 	
 	def __init__(self, *args, **kwargs):
 		self.core = CoreProtocol(self)
+		self.disconnect_message = None
 		
 		super(UpstreamProtocol, self).__init__(*args, **kwargs)
 
@@ -67,10 +68,28 @@ class UpstreamProtocol(ClientProtocol):
 			self.remove_forwarding_bridge(bridge)
 			bridge.upstream_disconnected()
 	
-	def close(self, *args, **kwargs):
-		super(UpstreamProtocol, self).close(*args, **kwargs)
+	def close(self, reason=None):
+		if not self.in_game and self.factory.protocol_callback:
+			try:
+				self.factory.protocol_callback(self)
+			except Exception as e:
+				print("Error in protocol callback", e)
+				
+		super(UpstreamProtocol, self).close(reason)
 		self.factory.stopTrying()
 		del self
 		
+	def packet_login_disconnect(self, buff):
+		buff.save()
+		self.disconnect_message = buff.unpack_chat()
+		buff.restore()
+		super(UpstreamProtocol, self).packet_login_disconnect(buff)
+	
+	def packet_disconnect(self, buff):
+		buff.save()
+		self.disconnect_message = buff.unpack_chat()
+		buff.restore()
+		super(UpstreamProtocol, self).packet_disconnect(buff)
+	
 	def super_handle_packet(self, buff, name):
 		super(UpstreamProtocol, self).packet_received(buff, name)
