@@ -143,14 +143,13 @@ class AntiAfkPlugin(UpstreamPlugin):
 		return self.config["frequency"]
 
 	# packet handling
-	def packet_update_health(self, buff):
+	def packet_mirror_update_health(self, buff):
 		hp = buff.unpack("f")
 		buff.discard()
-		
-		if hp <= 0:
-			self.ticker.add_delay(20, self.respawn)
-		
-		return "finish"
+		if self.running:
+			
+			if hp <= 0:
+				self.ticker.add_delay(20, self.respawn)
 	
 	# TODO: move auto respawn to a sperate plugin to handle low hp
 	def respawn(self):
