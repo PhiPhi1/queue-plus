@@ -57,12 +57,17 @@ class QueueBossBarPlugin(BridgePlugin):
 		upstream_queue = self.get_queue_plugin(session)
 		session_metadata = self.watched_protocols[session]
 		upstream_queue.remove_queue_listener(session_metadata["callback"])
-		
-		while session in self.watched_protocols:
-			del self.watched_protocols[session]
-		
+
+		if session in self.watched_protocols:
+			while session in self.watched_protocols:
+				del self.watched_protocols[session]
+
 		self.bridge.packet_received(self.buff_type(self.buff_type.pack_uuid(session_metadata["uuid"]) + self.buff_type.pack_varint(1)), "downstream", "boss_bar")
-	
+
+		# sending an update to make sure that the client knows that it has been removed
+		self.bridge.packet_received(self.buff_type(self.buff_type.pack_uuid(session_metadata["uuid"]) + self.buff_type.pack_varint(2) + self.buff_type.pack("f", 0)), "downstream", "boss_bar")
+
+		
 	def create_boss_bar(self, session):
 		if self.watched_protocols[session]["spawned"]:
 			return
@@ -89,6 +94,17 @@ class QueueBossBarPlugin(BridgePlugin):
 		
 		if session not in self.watched_protocols:
 			# TODO remove from callbacks
+			upstream_queue.remove_queue_listener(self.watched_protocols[session]["callback"])
+			return
+		
+		if not upstream_queue.in_queue and upstream_queue.queue_position is -1 and upstream_queue.queue_starting_position is -1:
+			from plugins.bridge.notifications import NotificationsPlugin
+			notifications = self.bridge.core.get_plugin(NotificationsPlugin)
+			
+			message = "§c%s has been disconnected" % self.watched_protocols[session]["username"]
+			notifications.send_chat_notification(message, True)
+			
+			self.removed_watched_protocol(session)
 			return
 		
 		if not upstream_queue.in_queue:
@@ -96,8 +112,9 @@ class QueueBossBarPlugin(BridgePlugin):
 			notifications = self.bridge.core.get_plugin(NotificationsPlugin)
 			
 			message = "§a[%s] %s has finished the queue" % (self.upstream_controller.sessions.protocols.index(session), self.watched_protocols[session]["username"])
+
 			notifications.send_chat_notification(message, True)
-			
+
 			self.removed_watched_protocol(session)
 			return
 		

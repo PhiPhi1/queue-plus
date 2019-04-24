@@ -63,8 +63,9 @@ class QueuePlugin(UpstreamPlugin):
 		
 	def remove_from_queue(self):
 		self.in_queue = False
-		self.queue_position = 0
-		self.queue_starting_position = 0
+		self.queue_position = -1
+		self.queue_starting_position = -1
+		
 		self.queue_update()
 		return
 		
@@ -84,3 +85,6 @@ class QueuePlugin(UpstreamPlugin):
 			except Exception as e:
 				print("error while running queue callback:", e)
 		return
+
+	def on_leave(self):
+		self.remove_from_queue()
