@@ -63,10 +63,10 @@ class QueuePlugin(UpstreamPlugin):
 		
 	def remove_from_queue(self):
 		self.in_queue = False
-		self.queue_position = -1
-		self.queue_starting_position = -1
 		
 		self.queue_update()
+		self.queue_position = -1
+		self.queue_starting_position = -1
 		return
 		
 	def add_queue_listener(self, callback):
@@ -87,4 +87,6 @@ class QueuePlugin(UpstreamPlugin):
 		return
 
 	def on_leave(self):
+		self.queue_position = -1
+		self.queue_starting_position = -1
 		self.remove_from_queue()
