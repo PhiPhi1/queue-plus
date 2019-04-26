@@ -46,7 +46,9 @@ def packet_mirror_respawn(self, buff):
 
 
 def serialize_respawn(self):
-	return [("respawn", self.processed_data["respawn"])]
+	if self.processed_data["respawn"] is not None and len(self.processed_data["respawn"]) > 0:
+		return [("respawn", self.processed_data["respawn"])]
+	return []
 
 
 def packet_mirror_player_position_and_look(self, buff):
