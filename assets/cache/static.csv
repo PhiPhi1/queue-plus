@@ -12,6 +12,5 @@ set_experience
 statistics
 change_game_state
 time_update
-respawn
 resource_pack_send
 player_list_header_footer

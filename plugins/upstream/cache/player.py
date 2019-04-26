@@ -19,16 +19,36 @@
 
 def packet_mirror_join_game(self, buff):
 	buff.save()
-	_, gamemode, dimension, difficulty, _ = buff.unpack("iBiBB")
+	self.player_eid, gamemode, dimension, difficulty, _ = buff.unpack("iBiBB")
+	
+	# updates set gamemode if respawn
+	self.static_data["change_game_state"] = buff.pack("Bf", 3, gamemode)
+	
 	level_type = buff.unpack_string()
 	_ = buff.unpack("?")
 	
-	self.static_data["respawn"] = buff.pack("iBB", dimension, difficulty, gamemode) + buff.pack_string(level_type)
+	self.processed_data["respawn"] = buff.pack("iBB", dimension, difficulty, gamemode) + buff.pack_string(level_type)
 	buff.restore()
 	self.static_data["join_game"] = buff.read()
 	return
+
+
+def packet_mirror_respawn(self, buff):
+	buff.save()
+	dim, diff, gamemode = buff.unpack("iBB")
+	level_type = buff.unpack_string()
 	
+	# updates set gamemode if respawn
+	self.static_data["change_game_state"] = buff.pack("Bf", 3, gamemode)
 	
+	buff.restore()
+	self.processed_data["respawn"] = buff.read()
+
+
+def serialize_respawn(self):
+	return [("respawn", self.processed_data["respawn"])]
+
+
 def packet_mirror_player_position_and_look(self, buff):
 	new_buffer = b""
 	x, y, z, yaw, pitch, flags = buff.unpack("dddffb")
@@ -94,6 +114,9 @@ def packet_mirror_player_list_item(self, buff):
 				self.processed_data["player_list_item"][uuid]["display"] = None
 		elif action == 4:
 			del self.processed_data["player_list_item"][uuid]
+			
+		if uuid == self.player_uuid and uuid in self.processed_data["player_list_item"] and "gamemode" in self.processed_data["player_list_item"]:
+			self.static_data["change_game_state"] = buff.pack("Bf", 3, self.processed_data["player_list_item"][uuid]["gamemode"])
 		
 		buff.discard()
 		return
@@ -130,3 +153,8 @@ def serialize_player_list_item(self):
 		
 		out.append(("player_list_item", serialized))
 	return out
+
+
+def packet_mirror_login_success(self, buff):
+	self.player_uuid = buff.unpack_uuid()
+	self.player_username = buff.unpack_string()
