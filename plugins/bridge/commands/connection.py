@@ -95,7 +95,12 @@ def command_reconnect(self, params):
 		self.send_error("Invalid account ID")
 		return
 	
-	self.upstream_controller.load_account(accounts[account_index])
+	self.send_response("§aReconnecting account %s" % account_index)
+	
+	def successfulConnection(*args, **kwargs):
+		self.send_response("§aAccount %s has successfully reconnected" % account_index)
+	
+	self.upstream_controller.load_account(accounts[account_index], callback=successfulConnection)
 
 
 def check_if_void(self):

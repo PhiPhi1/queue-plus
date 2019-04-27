@@ -4,6 +4,7 @@ APScheduler==3.6.0
 asn1crypto==0.24.0
 attrs==19.1.0
 Automat==0.7.0
+cached-property==1.5.1
 cffi==1.12.2
 constantly==15.1.0
 cryptography==2.6.1
@@ -23,7 +24,7 @@ PyHamcrest==1.9.0
 pymongo==3.7.2
 pyOpenSSL==19.0.0
 pytz==2019.1
-quarry==1.1.1
+quarry==1.2
 service-identity==18.1.0
 six==1.12.0
 tomlkit==0.5.3
