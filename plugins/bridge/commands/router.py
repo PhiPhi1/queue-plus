@@ -66,7 +66,7 @@ def command_phelp(self, params):
 			"description": "manually disconnect a session"
 		},
 		{
-			"command": "reconnect [<account id>]",
+			"command": "reconnect <account id>",
 			"description": "manually reconnect an account"
 		}
 	]
