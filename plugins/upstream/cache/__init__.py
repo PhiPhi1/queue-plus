@@ -31,7 +31,8 @@ class CachingPlugin(UpstreamPlugin):
 		packet_mirror_update_block_entity, serialize_block_change, serialize_chunk_data, serialize_multi_block_change, serialize_update_block_entity, is_in_chunk
 	
 	# importing player into namespace
-	from plugins.upstream.cache.player import packet_mirror_join_game, packet_mirror_player_position_and_look, packet_mirror_player_list_item, serialize_player_list_item
+	from plugins.upstream.cache.player import packet_mirror_join_game, packet_mirror_player_position_and_look, packet_mirror_player_list_item, serialize_player_list_item, serialize_respawn,\
+		packet_mirror_login_success, packet_mirror_respawn
 	
 	# importing inventory into namespace
 	from plugins.upstream.cache.inventory import packet_mirror_map_data, packet_mirror_set_slot, packet_mirror_window_items, serialize_map_data, serialize_set_slot, serialize_window_items
@@ -58,6 +59,10 @@ class CachingPlugin(UpstreamPlugin):
 		self.data = []
 		self.static_data = {}
 		self.processed_data = {}
+		
+		self.player_eid = None
+		self.player_uuid = None
+		self.player_username = None
 		
 		super(CachingPlugin, self).__init__(*args, **kwargs)
 	

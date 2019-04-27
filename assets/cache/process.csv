@@ -1,5 +1,7 @@
 packet
+login_success
 join_game
+respawn
 
 window_items
 set_slot

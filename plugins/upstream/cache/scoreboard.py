@@ -26,7 +26,7 @@ def packet_mirror_scoreboard_objective(self, buff):
 		self.processed_data["scoreboard_objective"][name] = []
 
 	if mode == 1:
-		self.processed_data["scoreboard_objective"].remove([name])
+		del self.processed_data["scoreboard_objective"][name]
 		return
 	
 	self.processed_data["scoreboard_objective"][name].append(buff.read())
