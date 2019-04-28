@@ -1,5 +1,5 @@
 # queue-plus
-version: ALPHA v0.2.1
+version: ALPHA v0.2.2
 ### features:
 - plugins
 - hot swappable accounts
