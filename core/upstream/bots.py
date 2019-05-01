@@ -71,5 +71,15 @@ class UpstreamBots:
 			bot.on_leave()
 		return
 	
+	def on_bridge_add(self, bridge):
+		for bot in self.bots:
+			bot.on_bridge_add(bridge)
+		return
+	
+	def on_bridge_remove(self, bridge):
+		for bot in self.bots:
+			bot.on_bridge_remove(bridge)
+		return
+	
 	def get_bots(self):
 		return get_bots()

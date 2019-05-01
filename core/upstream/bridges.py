@@ -35,11 +35,15 @@ def setup_bridge(self, bridge):
 def add_forwarding_bridge(self, bridge):
 	self.factory.add_bridge(bridge)
 	self.setup_bridge(bridge)
+	self.bots.on_bridge_add(bridge)
 	return
 
 
 def remove_forwarding_bridge(self, bridge):
+	print("disconnected")
 	self.logger.debug("removing bridge")
+	self.bots.on_bridge_remove(bridge)
+	
 	self.factory.remove_control(bridge)
 	self.factory.remove_bridge(bridge)
 	return

@@ -30,6 +30,11 @@ class Bots(Plugin):
 	def send_packet(self, name, *data):
 		return self.protocol.send_packet(name, *data)
 
+	def on_bridge_add(self, bridge):
+		pass
+	
+	def on_bridge_remove(self, bridge):
+		pass
 
 def get_bots():
 	from bots.anti_afk import AntiAfkBot

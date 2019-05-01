@@ -19,5 +19,8 @@ from bots import Bots
 
 
 class AntiAfkBot(Bots):
-	def on_join(self):
-		print("works")
+	def on_bridge_add(self, bridge):
+		print(bridge)
+	
+	def on_bridge_remove(self, bridge):
+		print(bridge)

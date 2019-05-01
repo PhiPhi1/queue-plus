@@ -27,7 +27,9 @@ def downstream_disconnected(self):
 		return
 	
 	if self.upstream and self.upstream.factory.check_permission(self) and not self.config["safe_disconnect"]:
-		self.upstream.close()
+		self.ustream.close()
+	
+	self.upstream.remove_forwarding_bridge(self)
 	return
 
 
