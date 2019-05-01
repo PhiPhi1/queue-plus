@@ -15,4 +15,25 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from plugins import Plugin
 
+
+class Bots(Plugin):
+	name = "default"
+	
+	def packet_received(self, buff, name):
+		method_pointer = "packet_%s" % name
+		
+		self.handle_packet(method_pointer, buff)
+		return
+
+	def send_packet(self, name, *data):
+		return self.protocol.send_packet(name, *data)
+
+
+def get_bots():
+	from bots.anti_afk import AntiAfkBot
+	
+	return [
+		AntiAfkBot
+	]
