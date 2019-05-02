@@ -1,9 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (bridges.py) is part of Queue Plus.
-#
-#      Queue Plus is a proxy service that is designed to be highly modular.
+#      This file (callbacks.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -19,30 +17,40 @@
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 
 
-def setup_bridge(self, bridge):
-	if self.in_game:
-		self.logger.debug("setting up bridge")
-		
-		bridge.upstream_factory_class = self.factory.__class__
-		bridge.upstream_factory = self.factory
-		bridge.upstream = self
-		self.logger.debug("set bridge upstream attributes")
-		
-		bridge.upstream_ready()
-	return
-
-
-def add_forwarding_bridge(self, bridge):
-	self.factory.add_bridge(bridge)
-	self.setup_bridge(bridge)
-	self.bots.on_bridge_add(bridge)
-	return
-
-
-def remove_forwarding_bridge(self, bridge):
-	self.logger.debug("removing bridge")
-	self.bots.on_bridge_remove(bridge)
+def on_ready_bots(self):
+	for bot in list(self.bots):
+		self.bots[bot]["protocol"].on_ready()
 	
-	self.factory.remove_control(bridge)
-	self.factory.remove_bridge(bridge)
+	return
+
+
+def on_join_bots(self):
+	for bot in list(self.bots):
+		self.bots[bot]["protocol"].on_join()
+	return
+
+
+def on_leave_bots(self):
+	for bot in list(self.bots):
+		self.bots[bot]["protocol"].on_leave()
+	return
+
+
+def on_stop_bots(self):
+	for bot in list(self.bots):
+		self.bots[bot]["protocol"].on_stop()
+	return
+
+
+def on_bridge_add(self, bridge):
+	for bot in list(self.bots):
+		self.bots[bot]["protocol"].on_bridge_add(bridge)
+	self.update_bots()
+	return
+
+
+def on_bridge_remove(self, bridge):
+	for bot in list(self.bots):
+		self.bots[bot]["protocol"].on_bridge_remove(bridge)
+	self.update_bots()
 	return

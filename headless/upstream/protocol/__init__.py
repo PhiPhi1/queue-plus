@@ -22,7 +22,7 @@ from quarry.net.crypto import Cipher
 
 from controllers.config import ConfigController
 from core import CoreProtocol
-from core.upstream import UpstreamProtocol
+from core.upstream import UpstreamProtocol, UpstreamBots
 from plugins.upstream import get_plugins
 
 
@@ -30,6 +30,12 @@ class PseudoProtocol(UpstreamProtocol):
 	# replaces all connection details with pseudo info
 	# noinspection PyMissingConstructor,PyUnusedLocal,PyUnusedLocal
 	def __init__(self, factory, *args, **kwargs):
+		self.bots = UpstreamBots(self)
+		
+		def no_bots():
+			return []
+		self.bots.get_bots = no_bots
+		
 		self.config = ConfigController.instance().data
 		self.core = CoreProtocol(self)
 

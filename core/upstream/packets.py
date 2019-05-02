@@ -28,6 +28,9 @@ def packet_received(self, buff, name):
 				buff.restore()
 				bridge.packet_received(buff, self.recv_direction, name)
 		
+		buff.restore()
+		self.bots.route_bot_packet(buff, name)
+		
 		if not self.factory.bridges.__len__() > 0:
 			buff.restore()
 			self.super_handle_packet(buff, name)

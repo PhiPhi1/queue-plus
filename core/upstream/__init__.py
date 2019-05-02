@@ -18,6 +18,7 @@
 from quarry.net.client import ClientProtocol
 
 from core import CoreProtocol
+from core.upstream.bots import UpstreamBots
 
 from plugins.upstream import get_plugins
 
@@ -28,6 +29,7 @@ class UpstreamProtocol(ClientProtocol):
 	
 	def __init__(self, *args, **kwargs):
 		self.core = CoreProtocol(self)
+		self.bots = UpstreamBots(self)
 		self.disconnect_message = None
 		
 		super(UpstreamProtocol, self).__init__(*args, **kwargs)
@@ -36,12 +38,16 @@ class UpstreamProtocol(ClientProtocol):
 	def setup(self):
 		self.core.load_plugins(get_plugins())
 		self.core.on_ready_plugins()
-
+		
+		self.bots.load_bots()
+		self.bots.on_ready_bots()
+	
 	def player_joined(self):
 		super(UpstreamProtocol, self).player_joined()
 		
 		self.factory.account_manager.sessions.add_session(self)
 		self.core.on_join_plugins()
+		self.bots.on_join_bots()
 		
 		if self.factory.protocol_callback:
 			try:
@@ -57,6 +63,9 @@ class UpstreamProtocol(ClientProtocol):
 		super(UpstreamProtocol, self).player_left()
 		
 		self.factory.account_manager.sessions.remove_session(self)
+		
+		self.bots.on_leave_bots()
+		self.bots.unload_bots()
 		
 		self.core.on_leave_plugins()
 		self.core.unload_plugins()
