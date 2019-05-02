@@ -64,10 +64,20 @@ class AntiAfkBot(Bots):
 	
 	def on_start(self):
 		print("starting")
+		from plugins.upstream.cache import CachingPlugin
+		cache = self.protocol.core.get_plugin(CachingPlugin)
+		
+		if "player_position_and_look" in cache.static_data:
+			buff = cache.static_data["player_position_and_look"]
+			unpacked_buff = self.protocol.buff_type(buff)
+			self.packet_player_position_and_look(unpacked_buff)
+			print("using position from cache")
+			
 		self.start()
 		
 		
 	def on_stop(self):
+		print("stopping")
 		self.stop()
 	
 	
