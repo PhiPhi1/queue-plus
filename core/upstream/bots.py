@@ -20,12 +20,12 @@ from bots import get_bots, Bots
 
 class UpstreamBots:
 	def __init__(self, protocol):
-		self.bots = []
+		self.bots = {}
 		self.protocol = protocol
 	
 	def route_bot_packet(self, buff, name):
-		for bot in self.bots:
-			bot.packet_received(buff, name)
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].packet_received(buff, name)
 		return
 
 	def load_bots(self):
@@ -38,55 +38,76 @@ class UpstreamBots:
 		# does not load an already loaded bot
 		loaded_bot = self.get_loaded_bot(bot_class)
 		if loaded_bot is not None:
-			loaded_bot.on_start()
+			bot_running = False
+			if loaded_bot in list(self.bots):
+				bot_running = self.bots[loaded_bot]["running"]
+				
+			if not bot_running:
+				self.bots[loaded_bot]["running"] = True
+				loaded_bot.on_start()
 			return
 		
 		bot = bot_class(self.protocol, self.protocol.ticker)
-		self.bots.append(bot)
+		self.bots[bot] = {
+			"protocol": bot,
+			"running": False
+		}
 		self.protocol.logger.debug("loaded bot %s" % bot)
 		
+		self.bots[bot]["running"] = True
 		bot.on_start()
 		return
 	
 	def unload_bots(self):
-		for bot in self.bots:
-			bot.on_stop()
-			self.unload_bot(bot)
+		for bot in list(self.bots):
+			# bot.on_stop()
+			self.unload_bot(self.bots[bot]["protocol"])
 		return
 	
 	def unload_bot(self, bot):
 		# does not load an already loaded bot
-		if bot not in self.bots:
+		found_bot = False
+		for _bot in list(self.bots):
+			if self.bots[_bot]["protocol"] == bot:
+				found_bot = True
+				break
+		
+		if not found_bot:
 			return
 		
 		# bot.on_unload()
-		# while bot in self.bots:
+		# while bot in list(self.bots:
 		# 	self.bots.remove(bot)
 		
 		bot.on_stop()
 		
+		bot_running = False
+		if bot in list(self.bots):
+			bot_running = self.bots[bot]["running"]
+			
+		self.bots[bot]["running"] = False
 		# if bot:
 		# 	del bot
-			
+		
 		return
 	
 	
 	def on_ready_bots(self):
-		for bot in self.bots:
-			bot.on_ready()
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].on_ready()
 		
 		return
 	
 	
 	def on_join_bots(self):
-		for bot in self.bots:
-			bot.on_join()
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].on_join()
 		return
 	
 	
 	def on_leave_bots(self):
-		for bot in self.bots:
-			bot.on_leave()
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].on_leave()
 		return
 	
 	def on_start_bots(self):
@@ -96,19 +117,19 @@ class UpstreamBots:
 		return
 	
 	def on_stop_bots(self):
-		for bot in self.bots:
-			bot.on_stop()
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].on_stop()
 		return
 	
 	def on_bridge_add(self, bridge):
-		for bot in self.bots:
-			bot.on_bridge_add(bridge)
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].on_bridge_add(bridge)
 		self.update_bots()
 		return
 	
 	def on_bridge_remove(self, bridge):
-		for bot in self.bots:
-			bot.on_bridge_remove(bridge)
+		for bot in list(self.bots):
+			self.bots[bot]["protocol"].on_bridge_remove(bridge)
 		self.update_bots()
 		return
 	
@@ -120,7 +141,11 @@ class UpstreamBots:
 			loaded_bot = self.get_loaded_bot(bot_class)
 			
 			if (not bot_class.loading["symbiotic"]) == self.protocol.factory.bridges.__len__() > 0:
-				if loaded_bot is not None:
+				bot_running = False
+				if loaded_bot in self.bots:
+					bot_running = self.bots[loaded_bot]["running"]
+				
+				if (loaded_bot is not None) and bot_running:
 					self.unload_bot(loaded_bot)
 					self.protocol.logger.debug("unloading %s" % loaded_bot)
 					
@@ -135,9 +160,9 @@ class UpstreamBots:
 	
 	
 	def get_loaded_bot(self, bot_class):
-		for bot in self.bots:
-			if isinstance(bot, bot_class):
-				return bot
+		for bot in list(self.bots):
+			if isinstance(self.bots[bot]["protocol"], bot_class):
+				return self.bots[bot]["protocol"]
 		return None
 	
 	def get_bots(self):
