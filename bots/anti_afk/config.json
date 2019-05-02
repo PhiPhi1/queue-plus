@@ -1,0 +1,13 @@
+{
+  "randomize": {
+    "enabled": true,
+    "min": 0.25
+  },
+  "walk": {
+    "speed": 10,
+    "smoothing": 1,
+    "distance": 2
+  },
+  "frequency": 150,
+  "on_start": true
+}

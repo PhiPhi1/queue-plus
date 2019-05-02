@@ -22,7 +22,6 @@ class UpstreamBots:
 	def __init__(self, protocol):
 		self.bots = []
 		self.protocol = protocol
-		self.ticker = protocol.ticker
 	
 	def route_bot_packet(self, buff, name):
 		for bot in self.bots:
@@ -37,16 +36,21 @@ class UpstreamBots:
 	
 	def load_bot(self, bot_class):
 		# does not load an already loaded bot
-		if self.get_loaded_bot(bot_class) is not None:
+		loaded_bot = self.get_loaded_bot(bot_class)
+		if loaded_bot is not None:
+			loaded_bot.on_start()
 			return
 		
-		bot = bot_class(self.protocol, self.ticker)
+		bot = bot_class(self.protocol, self.protocol.ticker)
 		self.bots.append(bot)
 		self.protocol.logger.debug("loaded bot %s" % bot)
+		
+		bot.on_start()
 		return
 	
 	def unload_bots(self):
 		for bot in self.bots:
+			bot.on_stop()
 			self.unload_bot(bot)
 		return
 	
@@ -55,9 +59,15 @@ class UpstreamBots:
 		if bot not in self.bots:
 			return
 		
-		bot.on_unload()
-		while bot in self.bots:
-			self.bots.remove(bot)
+		# bot.on_unload()
+		# while bot in self.bots:
+		# 	self.bots.remove(bot)
+		
+		bot.on_stop()
+		
+		# if bot:
+		# 	del bot
+			
 		return
 	
 	
@@ -79,6 +89,17 @@ class UpstreamBots:
 			bot.on_leave()
 		return
 	
+	def on_start_bots(self):
+		for bot_class in self.get_bots():
+			if bot_class.loading["start"]:
+				self.load_bot(bot_class)
+		return
+	
+	def on_stop_bots(self):
+		for bot in self.bots:
+			bot.on_stop()
+		return
+	
 	def on_bridge_add(self, bridge):
 		for bot in self.bots:
 			bot.on_bridge_add(bridge)
@@ -89,12 +110,6 @@ class UpstreamBots:
 		for bot in self.bots:
 			bot.on_bridge_remove(bridge)
 		self.update_bots()
-		return
-	
-	def on_start_bots(self):
-		for bot_class in self.get_bots():
-			if bot_class.loading["start"]:
-				self.load_bot(bot_class)
 		return
 	
 	def update_bots(self):
