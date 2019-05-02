@@ -48,10 +48,3 @@ class Bots(Plugin):
 	def on_stop(self):
 		pass
 
-
-def get_bots():
-	from bots.anti_afk import AntiAfkBot
-	
-	return [
-		AntiAfkBot
-	]

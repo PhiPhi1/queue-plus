@@ -35,22 +35,27 @@
 
 
 class UpstreamBots:
-	from core.upstream.bots.loading import load_bots, load_bot, get_loaded_bot, get_bots, unload_bots, unload_bot
-	from core.upstream.bots.callbacks import on_join_bots, on_leave_bots, on_bridge_add, on_bridge_remove, on_start_bots, on_ready_bots, on_stop_bots
+	from core.upstream.bots.loading import load_bots, load_bot, get_loaded_bot, get_bots, unload_bots, unload_bot, get_bot_classes
+	from core.upstream.bots.callbacks import on_join_bots, on_leave_bots, on_bridge_add, on_bridge_remove, on_ready_bots, on_stop_bots
 	
 	def __init__(self, protocol):
+		self.player_uuid = None
+		self.player_username = None
+		
 		self.bots = {}
+		self.bot_info = self.get_bots()
 		self.protocol = protocol
 	
 	
 	def route_bot_packet(self, buff, name):
+		buff.save()
 		for bot in list(self.bots):
 			self.bots[bot]["protocol"].packet_received(buff, name)
 		return
 	
 	
 	def update_bots(self):
-		bot_classes = self.get_bots()
+		bot_classes = self.get_bot_classes()
 		
 		for bot_class in bot_classes:
 			# checks i

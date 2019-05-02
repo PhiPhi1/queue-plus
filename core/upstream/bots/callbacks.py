@@ -36,13 +36,6 @@ def on_leave_bots(self):
 	return
 
 
-def on_start_bots(self):
-	for bot_class in self.get_bots():
-		if bot_class.loading["start"]:
-			self.load_bot(bot_class)
-	return
-
-
 def on_stop_bots(self):
 	for bot in list(self.bots):
 		self.bots[bot]["protocol"].on_stop()

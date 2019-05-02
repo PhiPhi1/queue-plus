@@ -15,17 +15,27 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-from bots import get_bots as _get_bots, Bots
+import importlib
+import json
 
 
 def load_bots(self):
 	self.protocol.logger.debug("Loading Bots")
-	for bot_class in self.get_bots():
-		self.load_bot(bot_class)
+	username = self.protocol.factory.player_username
+
+	if username not in self.bot_info["accounts"]:
+		return
+	
+	packages = self.bot_info["accounts"][self.protocol.factory.player_username]["bots"]
+
+	for package in packages:
+		if package in self.bot_info["bots"]:
+			self.load_bot(self.bot_info["bots"][package]["class"])
 	return
 
 
 def load_bot(self, bot_class):
+	
 	# does not load an already loaded bot
 	loaded_bot = self.get_loaded_bot(bot_class)
 	if loaded_bot is not None:
@@ -41,7 +51,7 @@ def load_bot(self, bot_class):
 	bot = bot_class(self.protocol, self.protocol.ticker)
 	self.bots[bot] = {
 		"protocol": bot,
-		"running" : False
+		"running": False
 	}
 	self.protocol.logger.debug("loaded bot %s" % bot)
 	
@@ -93,4 +103,35 @@ def get_loaded_bot(self, bot_class):
 
 
 def get_bots(self):
-	return _get_bots()
+	path = "bots/config.json"
+	out = {
+		"bots": {},
+		"accounts": {}
+	}
+	
+	with open(path) as config_file:
+		data = json.load(config_file)
+	
+	for bot in data["bots"]:
+		m = importlib.import_module("bots." + bot["package"])
+		c = getattr(m, bot["class"])
+		
+		out["bots"][bot["package"]] = {
+			"package": m,
+			"class": c
+		}
+	
+	for account in data["accounts"]:
+		out["accounts"][account["username"]] = {
+			"username": account["username"],
+			"bots": account["bots"]
+		}
+		
+	return out
+
+
+def get_bot_classes(self):
+	bot_classes = []
+	for bot_data in list(self.bot_info["bots"]):
+		bot_classes.append(self.bot_info["bots"][bot_data]["class"])
+	return bot_classes

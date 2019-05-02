@@ -61,6 +61,8 @@ class UpstreamController:
 		factory = UpstreamFactory(profile)
 		factory.account_manager = self
 		factory.protocol_callback = callback
+		
+		factory.player_username = username
 
 		yield factory.connect(host, port)
 	
