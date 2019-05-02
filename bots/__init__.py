@@ -20,6 +20,12 @@ from plugins import Plugin
 
 class Bots(Plugin):
 	name = "default"
+	loading = {
+		# Load bot when upstream joins
+		"start": False,
+		# Run while bridge is connected
+		"symbiotic": False
+	}
 	
 	def packet_received(self, buff, name):
 		method_pointer = "packet_%s" % name

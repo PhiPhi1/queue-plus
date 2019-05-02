@@ -39,7 +39,7 @@ class UpstreamProtocol(ClientProtocol):
 		self.core.load_plugins(get_plugins())
 		self.core.on_ready_plugins()
 		
-		self.bots.load_bots()
+		self.bots.on_start_bots()
 		self.bots.on_ready_bots()
 		
 	def player_joined(self):

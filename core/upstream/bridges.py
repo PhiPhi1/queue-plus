@@ -40,7 +40,6 @@ def add_forwarding_bridge(self, bridge):
 
 
 def remove_forwarding_bridge(self, bridge):
-	print("disconnected")
 	self.logger.debug("removing bridge")
 	self.bots.on_bridge_remove(bridge)
 	

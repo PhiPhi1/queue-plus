@@ -15,7 +15,7 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-from bots import get_bots
+from bots import get_bots, Bots
 
 
 class UpstreamBots:
@@ -36,9 +36,13 @@ class UpstreamBots:
 		return
 	
 	def load_bot(self, bot_class):
+		# does not load an already loaded bot
+		if self.get_loaded_bot(bot_class) is not None:
+			return
+		
 		bot = bot_class(self.protocol, self.ticker)
 		self.bots.append(bot)
-		print("loaded bot %s" % bot)
+		self.protocol.logger.debug("loaded bot %s" % bot)
 		return
 	
 	def unload_bots(self):
@@ -47,6 +51,10 @@ class UpstreamBots:
 		return
 	
 	def unload_bot(self, bot):
+		# does not load an already loaded bot
+		if bot not in self.bots:
+			return
+		
 		bot.on_unload()
 		while bot in self.bots:
 			self.bots.remove(bot)
@@ -74,12 +82,48 @@ class UpstreamBots:
 	def on_bridge_add(self, bridge):
 		for bot in self.bots:
 			bot.on_bridge_add(bridge)
+		self.update_bots()
 		return
 	
 	def on_bridge_remove(self, bridge):
 		for bot in self.bots:
 			bot.on_bridge_remove(bridge)
+		self.update_bots()
 		return
+	
+	def on_start_bots(self):
+		for bot_class in self.get_bots():
+			if bot_class.loading["start"]:
+				self.load_bot(bot_class)
+		return
+	
+	def update_bots(self):
+		bot_classes = self.get_bots()
+		
+		for bot_class in bot_classes:
+			# checks i
+			loaded_bot = self.get_loaded_bot(bot_class)
+			
+			if (not bot_class.loading["symbiotic"]) == self.protocol.factory.bridges.__len__() > 0:
+				if loaded_bot is not None:
+					self.unload_bot(loaded_bot)
+					self.protocol.logger.debug("unloading %s" % loaded_bot)
+					
+					# sets to true so it can be reloaded
+					bot_class.loading["start"] = True
+					
+				# checks if bot should be restarted
+				elif bot_class.loading["start"]:
+					self.load_bot(bot_class)
+					self.protocol.logger.debug("loaded %s" % bot_class)
+		return
+	
+	
+	def get_loaded_bot(self, bot_class):
+		for bot in self.bots:
+			if isinstance(bot, bot_class):
+				return bot
+		return None
 	
 	def get_bots(self):
 		return get_bots()

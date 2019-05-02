@@ -19,8 +19,10 @@ from bots import Bots
 
 
 class AntiAfkBot(Bots):
-	def on_bridge_add(self, bridge):
-		print(bridge)
-	
-	def on_bridge_remove(self, bridge):
-		print(bridge)
+	loading = {
+		# Load bot when upstream joins
+		"start": True,
+		# Run while bridge is connected
+		"symbiotic": False
+	}
+
