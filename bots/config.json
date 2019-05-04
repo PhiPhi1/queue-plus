@@ -7,10 +7,14 @@
   ],
   "accounts": [
     {
-      "username": "PearlKeeper_01",
+      "username": "MyCoolName",
       "bots": [
         "anti_afk"
       ]
+    },
+    {
+      "username": "MyCoolOtherName",
+      "bots": []
     }
   ]
 }
