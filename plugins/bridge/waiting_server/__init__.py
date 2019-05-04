@@ -94,8 +94,13 @@ class WaitingServerPlugin(BridgePlugin):
 				self.send_message("§cConnection failed")
 			return
 		
+		# protocol.bots.on_leave_bots()
+		# protocol.bots.unload_bots()
+		
+		self.send_message("§aCaching Started")
 		
 		def load_cache():
+			self.send_message("§aLoading Cache")
 			from plugins.bridge.hot_swap import HotSwapPlugin
 			hot_swap = self.bridge.core.get_plugin(HotSwapPlugin)
 			
