@@ -60,6 +60,7 @@ class AntiAfkBot(Bots):
 		
 		if self.queue_start:
 			self.start()
+		return
 	
 	
 	def on_start(self):
@@ -72,11 +73,12 @@ class AntiAfkBot(Bots):
 			self.packet_player_position_and_look(unpacked_buff)
 			
 		self.start()
+		return
 		
 		
 	def on_stop(self):
 		self.stop()
-	
+		return
 	
 	def start(self):
 		if self.ready:
@@ -86,7 +88,7 @@ class AntiAfkBot(Bots):
 			self.anti_afk_loop()
 		else:
 			self.queue_start = True
-	
+		return
 	
 	def stop(self):
 		self.running = False
@@ -94,7 +96,7 @@ class AntiAfkBot(Bots):
 		if self.anti_afk_task:
 			self.ticker.remove(self.anti_afk_task)
 			self.anti_afk_task = None
-	
+		return
 	
 	def anti_afk_loop(self):
 		if not self.running:
@@ -145,7 +147,7 @@ class AntiAfkBot(Bots):
 		
 		
 		ticker_loop()
-	
+		return
 	
 	def get_delay(self):
 		if self.config["randomize"]["enabled"]:
@@ -158,9 +160,9 @@ class AntiAfkBot(Bots):
 		buff.discard()
 		if self.running and hp <= 0:
 			self.ticker.add_delay(20, self.respawn)
-	
+		return
 	
 	# TODO: move auto respawn to a sperate plugin to handle low hp
 	def respawn(self):
 		self.protocol.send_packet("client_status", self.buff_type.pack_varint(0))
-
+		return
