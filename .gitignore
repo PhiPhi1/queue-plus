@@ -110,6 +110,4 @@ venv.bak/
 \.data/
 data/
 
-installation/
-
 start\.bat
