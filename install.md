@@ -1,4 +1,4 @@
-# Installation
+# Manual Installation
 ## Requirements
 - python 3.5
 - pip
