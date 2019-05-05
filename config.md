@@ -28,7 +28,6 @@ following the csv format input your accounts info here. Example in the default f
     - smoothing: if you want to smooth out walking animations (multiplier)
     - distance: how far should be traveled in a direction before returning (in blocks)
  - fequency: how often to run the anti-afk measures
- - on_start: should it run when the client connects
 #### plugins/bridge/waiting_server/config.json
  - host: the waiting server ip
  - port: the waiting server port (normally 25565)
