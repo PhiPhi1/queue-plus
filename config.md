@@ -19,7 +19,7 @@
 - version: [protocol version of minecraft](https://wiki.vg/Protocol_version_numbers)
 #### data/accounts.csv
 following the csv format input your accounts info here. Example in the default file.
-#### plugins/upstream/anti_afk/config.json
+#### bots/anti_afk/config.json
 - randomize:
     - enabled: whether to randomize anti-afk loop
     - min: sets the minimum for a randomized variable by imputing a percentage (between 0 and 1)
@@ -28,8 +28,18 @@ following the csv format input your accounts info here. Example in the default f
     - smoothing: if you want to smooth out walking animations (multiplier)
     - distance: how far should be traveled in a direction before returning (in blocks)
  - fequency: how often to run the anti-afk measures
- - on_start: should it run when the client connects
 #### plugins/bridge/waiting_server/config.json
  - host: the waiting server ip
  - port: the waiting server port (normally 25565)
  - online: if the server is in online mode
+#### bots/config.json: configure what accounts are running what bots
+- bots: Array of all bot packages
+    - \<{}\>: represents an array item
+        - package: normally the folder or filename of the bot
+        - class: The initiating class
+- accounts: Array of all account related settings
+    - \<{}\> represents an array item
+        - username: The username (**CaSe Sensitive**) of the account. This is based on accounts.csv not when the account authenticates.
+        - bots: An array of bot packages
+            - \<package\>: the package name of a resisted bot
+

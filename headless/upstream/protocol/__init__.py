@@ -30,12 +30,6 @@ class PseudoProtocol(UpstreamProtocol):
 	# replaces all connection details with pseudo info
 	# noinspection PyMissingConstructor,PyUnusedLocal,PyUnusedLocal
 	def __init__(self, factory, *args, **kwargs):
-		self.bots = UpstreamBots(self)
-		
-		def no_bots():
-			return []
-		self.bots.get_bots = no_bots
-		
 		self.config = ConfigController.instance().data
 		self.core = CoreProtocol(self)
 
@@ -53,10 +47,18 @@ class PseudoProtocol(UpstreamProtocol):
 		self.ticker = self.factory.ticker_type(self.logger)
 		self.ticker.start()
 		
+		self.bots = UpstreamBots(self)
+		
+		def no_bots():
+			return []
+		
+		
+		self.bots.get_bots = no_bots
+		
 		self.setup()
 	
 	def setup(self):
-		super(PseudoProtocol, self).setup()
+		super(PseudoProtocol, self)._setup()
 		super(PseudoProtocol, self).player_joined()
 		return
 	

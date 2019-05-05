@@ -29,13 +29,18 @@ class UpstreamProtocol(ClientProtocol):
 	
 	def __init__(self, *args, **kwargs):
 		self.core = CoreProtocol(self)
-		self.bots = UpstreamBots(self)
 		self.disconnect_message = None
 		
 		super(UpstreamProtocol, self).__init__(*args, **kwargs)
-
+		
+		self.bots = UpstreamBots(self)
+		self._setup()
 
 	def setup(self):
+		pass
+
+	# using a different setup so it can be called after init
+	def _setup(self):
 		self.core.load_plugins(get_plugins())
 		self.core.on_ready_plugins()
 		
@@ -48,6 +53,8 @@ class UpstreamProtocol(ClientProtocol):
 		self.factory.account_manager.sessions.add_session(self)
 		self.core.on_join_plugins()
 		self.bots.on_join_bots()
+		
+		self.bots.update_bots()
 		
 		if self.factory.protocol_callback:
 			try:

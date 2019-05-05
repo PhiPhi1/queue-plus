@@ -8,6 +8,5 @@
     "smoothing": 1,
     "distance": 2
   },
-  "frequency": 150,
-  "on_start": true
+  "frequency": 150
 }
