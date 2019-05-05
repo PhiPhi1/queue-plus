@@ -1,9 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (bridges.py) is part of Queue Plus.
-#
-#      Queue Plus is a proxy service that is designed to be highly modular.
+#      This file (__init__.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -17,32 +15,41 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from plugins import Plugin
 
 
-def setup_bridge(self, bridge):
-	if self.in_game:
-		self.logger.debug("setting up bridge")
-		
-		bridge.upstream_factory_class = self.factory.__class__
-		bridge.upstream_factory = self.factory
-		bridge.upstream = self
-		self.logger.debug("set bridge upstream attributes")
-		
-		bridge.upstream_ready()
-	return
-
-
-def add_forwarding_bridge(self, bridge):
-	self.factory.add_bridge(bridge)
-	self.setup_bridge(bridge)
-	self.bots.on_bridge_add(bridge)
-	return
-
-
-def remove_forwarding_bridge(self, bridge):
-	self.logger.debug("removing bridge")
+class Bots(Plugin):
+	name = "default"
+	loading = {
+		# Load bot when upstream joins
+		"start"    : False,
+		# Run while bridge is connected
+		"symbiotic": False
+	}
 	
-	self.factory.remove_control(bridge)
-	self.factory.remove_bridge(bridge)
-	self.bots.on_bridge_remove(bridge)
-	return
+	def __init__(self, *args, **kwargs):
+		self.running = False
+		
+		super(Bots, self).__init__(*args, **kwargs)
+	
+	def packet_received(self, buff, name):
+		method_pointer = "packet_%s" % name
+		
+		self.handle_packet(method_pointer, buff)
+		return
+
+	def send_packet(self, name, *data):
+		return self.protocol.send_packet(name, *data)
+
+	def on_bridge_add(self, bridge):
+		pass
+	
+	def on_bridge_remove(self, bridge):
+		pass
+	
+	def on_start(self):
+		pass
+	
+	def on_stop(self):
+		pass
+

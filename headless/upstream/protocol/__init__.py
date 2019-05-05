@@ -22,7 +22,7 @@ from quarry.net.crypto import Cipher
 
 from controllers.config import ConfigController
 from core import CoreProtocol
-from core.upstream import UpstreamProtocol
+from core.upstream import UpstreamProtocol, UpstreamBots
 from plugins.upstream import get_plugins
 
 
@@ -47,10 +47,18 @@ class PseudoProtocol(UpstreamProtocol):
 		self.ticker = self.factory.ticker_type(self.logger)
 		self.ticker.start()
 		
+		self.bots = UpstreamBots(self)
+		
+		def no_bots():
+			return []
+		
+		
+		self.bots.get_bots = no_bots
+		
 		self.setup()
 	
 	def setup(self):
-		super(PseudoProtocol, self).setup()
+		super(PseudoProtocol, self)._setup()
 		super(PseudoProtocol, self).player_joined()
 		return
 	

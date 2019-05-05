@@ -19,6 +19,12 @@
 
 def route_command(self, command_string):
 	command = command_string.split(" ")[0]
+	
+	# gives an alias to phelp command when in the void
+	from headless.upstream.factory.the_void import TheVoidProtocol
+	if command == "help" and isinstance(self.bridge.upstream, TheVoidProtocol):
+		command = "phelp"
+		
 	method_pointer = "command_%s" % command
 	handler = getattr(self, method_pointer, None)
 	if handler:
@@ -27,6 +33,10 @@ def route_command(self, command_string):
 		except Exception as e:
 			print("command error", method_pointer, e)
 		return "finish"
+	
+	# throws invalid command when connected to the void
+	elif isinstance(self.bridge.upstream, TheVoidProtocol):
+		self.send_error("Invalid command. For a full list of commands run /phelp.")
 	else:
 		return "continue"
 

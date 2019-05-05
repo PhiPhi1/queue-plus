@@ -38,6 +38,8 @@ class UpstreamFactory(ClientFactory, ReconnectingClientFactory):
 		self.bridges = []
 		self.controlling_bridges = []
 		
+		self.player_username = None
+		
 		super(UpstreamFactory, self).__init__(*args, **kwargs)
 	
 	

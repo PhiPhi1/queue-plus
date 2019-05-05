@@ -1,5 +1,5 @@
 {
-  "host": "88.198.32.151",
-  "port": 25565,
-  "online": true
+  "host": "test.queue.plus",
+  "port": 25500,
+  "online": false
 }

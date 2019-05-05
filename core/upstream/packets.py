@@ -31,6 +31,9 @@ def packet_received(self, buff, name):
 		if not self.factory.bridges.__len__() > 0:
 			buff.restore()
 			self.super_handle_packet(buff, name)
+		
+		buff.restore()
+		self.bots.route_bot_packet(buff, name)
 	
 	buff.discard()
 	return

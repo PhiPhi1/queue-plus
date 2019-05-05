@@ -1,0 +1,22 @@
+{
+  "bots": [
+    {
+      "package": "anti_afk",
+      "class": "AntiAfkBot"
+    }
+  ],
+  "accounts": [
+    {
+      "username": "MyCoolName",
+      "bots": [
+        "anti_afk"
+      ]
+    },
+    {
+      "username": "MyCoolOtherName",
+      "bots": [
+        "anti_afk"
+      ]
+    }
+  ]
+}
