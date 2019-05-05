@@ -1,4 +1,4 @@
-# queue-plus
+# Queue Plus
 version: ALPHA v0.3
 ### features:
 - plugins
