@@ -36,6 +36,9 @@ class UpstreamProtocol(ClientProtocol):
 		self.bots = UpstreamBots(self)
 		self._setup()
 
+	def setup(self):
+		pass
+
 	# using a different setup so it can be called after init
 	def _setup(self):
 		self.core.load_plugins(get_plugins())
