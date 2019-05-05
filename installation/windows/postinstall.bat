@@ -6,8 +6,7 @@ set python_folder=%~1
 "%python_folder%\Scripts\pip.exe" install quarry
 
 mkdir .\data
-copy ".\bin\sources\accounts.csv" ".\data\accounts.csv"
-copy ".\bin\sources\config.json" ".\data\config.json"
+Powershell.exe -executionpolicy remotesigned -File  .\installation\windows\copy_data.ps1
 
 echo echo off > ".\start.bat"
 echo echo ########################################################## >> ".\start.bat"
