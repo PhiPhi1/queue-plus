@@ -11,7 +11,7 @@
   ],
   "accounts": [
     {
-      "username": "MyCoolName",
+      "username": "MydCoolName",
       "bots": [
         "callback_testing"
       ]

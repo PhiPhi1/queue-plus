@@ -51,6 +51,8 @@ class UpstreamProtocol(ClientProtocol):
 		self.core.on_join_plugins()
 		self.bots.on_join_bots()
 		
+		self.bots.update_bots()
+		
 		if self.factory.protocol_callback:
 			try:
 				self.factory.protocol_callback(self)

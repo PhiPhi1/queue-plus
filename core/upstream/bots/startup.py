@@ -1,7 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (__init__.py) is part of Queue Plus.
+#      This file (startup.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -15,42 +15,38 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-from bots import Bots
 
 
-class CallbackTestingBot(Bots):
-	def __init__(self, *args, **kwargs):
-		self.name = "default"
-		self.loading = {
-			# Load bot when upstream joins
-			"start": True,
-			# Run while bridge is connected
-			"symbiotic": False
-		}
+def start_bot(self, bot):
+	bot_running = False
+	if bot in self.bots:
+		bot_running = bot.running
 		
-		super(CallbackTestingBot, self).__init__(*args, **kwargs)
+	if bot_running:
+		return
 	
+	bot.running = True
+	bot.on_start()
+
+
+def stop_bot(self, bot):
+	bot_running = False
+	if bot in self.bots:
+		bot_running = bot.running
 	
-	def on_ready(self):
-		print("ready", self)
+	if not bot_running:
+		return
 	
-	def on_unload(self):
-		print("unload", self)
-	
-	def on_bridge_add(self, bridge):
-		print("bridge added", self)
-	
-	def on_bridge_remove(self, bridge):
-		print("bridge removed", self)
-	
-	def on_join(self):
-		print("joined", self)
-	
-	def on_leave(self):
-		print("left", self)
-	
-	def on_start(self):
-		print("start", self)
-	
-	def on_stop(self):
-		print("stop", self)
+	bot.running = False
+	bot.on_stop()
+
+
+def update_bots(self):
+	for bot in self.bots:
+		# checks if symbiosis is conflicting
+		symbiotic_conflict = (not bot.loading["symbiotic"]) == self.protocol.factory.bridges.__len__() > 0
+		if symbiotic_conflict:
+			self.stop_bot(bot)
+		else:
+			self.start_bot(bot)
+	return
