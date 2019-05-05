@@ -25,7 +25,7 @@ version: ALPHA v0.3
 
 ## installation
 ### automatic
-- no data
+- [Windows](https://github.com/the-emperium/queue-plus/releases/tag/0.3)
 ### manual
 - [installation guide](https://github.com/the-emperium/queue-plus/blob/master/install.md)
 ## configuration
