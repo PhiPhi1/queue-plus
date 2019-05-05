@@ -1,9 +1,7 @@
 #      Copyright (C) 2019 - 2019 Akiva Silver and contributors of Queue Plus
 #      GitHub Page: <https://github.com/the-emperium/queue-plus>
 #
-#      This file (bridges.py) is part of Queue Plus.
-#
-#      Queue Plus is a proxy service that is designed to be highly modular.
+#      This file (__init__.py) is part of Queue Plus.
 #
 #      Queue Plus is free software: you can redistribute it and/or modify
 #      it under the terms of the GNU General Public License as published by
@@ -17,32 +15,42 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from bots import Bots
 
 
-def setup_bridge(self, bridge):
-	if self.in_game:
-		self.logger.debug("setting up bridge")
+class CallbackTestingBot(Bots):
+	def __init__(self, *args, **kwargs):
+		self.name = "default"
+		self.loading = {
+			# Load bot when upstream joins
+			"start": True,
+			# Run while bridge is connected
+			"symbiotic": False
+		}
 		
-		bridge.upstream_factory_class = self.factory.__class__
-		bridge.upstream_factory = self.factory
-		bridge.upstream = self
-		self.logger.debug("set bridge upstream attributes")
-		
-		bridge.upstream_ready()
-	return
-
-
-def add_forwarding_bridge(self, bridge):
-	self.factory.add_bridge(bridge)
-	self.setup_bridge(bridge)
-	self.bots.on_bridge_add(bridge)
-	return
-
-
-def remove_forwarding_bridge(self, bridge):
-	self.logger.debug("removing bridge")
+		super(CallbackTestingBot, self).__init__(*args, **kwargs)
 	
-	self.factory.remove_control(bridge)
-	self.factory.remove_bridge(bridge)
-	self.bots.on_bridge_remove(bridge)
-	return
+	
+	def on_ready(self):
+		print("ready", self)
+	
+	def on_unload(self):
+		print("unload", self)
+	
+	def on_bridge_add(self, bridge):
+		print("bridge added", self)
+	
+	def on_bridge_remove(self, bridge):
+		print("bridge removed", self)
+	
+	def on_join(self):
+		print("joined", self)
+	
+	def on_leave(self):
+		print("left", self)
+	
+	def on_start(self):
+		print("start", self)
+	
+	def on_stop(self):
+		print("stop", self)

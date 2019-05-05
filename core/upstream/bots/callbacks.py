@@ -19,38 +19,38 @@
 
 def on_ready_bots(self):
 	for bot in list(self.bots):
-		self.bots[bot]["protocol"].on_ready()
+		bot.on_ready()
 	
 	return
 
 
 def on_join_bots(self):
 	for bot in list(self.bots):
-		self.bots[bot]["protocol"].on_join()
+		bot.on_join()
 	return
 
 
 def on_leave_bots(self):
 	for bot in list(self.bots):
-		self.bots[bot]["protocol"].on_leave()
+		bot.on_leave()
 	return
 
 
 def on_stop_bots(self):
 	for bot in list(self.bots):
-		self.bots[bot]["protocol"].on_stop()
+		bot.on_stop()
 	return
 
 
 def on_bridge_add(self, bridge):
 	for bot in list(self.bots):
-		self.bots[bot]["protocol"].on_bridge_add(bridge)
+		bot.on_bridge_add(bridge)
 	self.update_bots()
 	return
 
 
 def on_bridge_remove(self, bridge):
 	for bot in list(self.bots):
-		self.bots[bot]["protocol"].on_bridge_remove(bridge)
+		bot.on_bridge_remove(bridge)
 	self.update_bots()
 	return

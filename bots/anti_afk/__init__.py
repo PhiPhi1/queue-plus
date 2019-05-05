@@ -26,7 +26,7 @@ from bots import Bots
 class AntiAfkBot(Bots):
 	loading = {
 		# Load bot when upstream joins
-		"start": True,
+		"start"    : True,
 		# Run while bridge is connected
 		"symbiotic": False
 	}
@@ -35,7 +35,6 @@ class AntiAfkBot(Bots):
 	def __init__(self, *args, **kwargs):
 		super(AntiAfkBot, self).__init__(*args, **kwargs)
 		
-		self.running = False
 		self.walk_cycle_running = False
 		self.anti_afk_task = None
 		self.player_position = glm.vec3(0, 0, 0)
@@ -45,9 +44,7 @@ class AntiAfkBot(Bots):
 		path = "bots/anti_afk/config.json"
 		with open(path) as config_file:
 			self.config = json.load(config_file)
-		
-		self.loading["start"] = self.config["on_start"]
-	
+			
 	
 	def packet_player_position_and_look(self, buff):
 		x, y, z, _, _, _ = buff.unpack("dddffb")
@@ -71,32 +68,31 @@ class AntiAfkBot(Bots):
 			buff = cache.static_data["player_position_and_look"]
 			unpacked_buff = self.protocol.buff_type(buff)
 			self.packet_player_position_and_look(unpacked_buff)
-			
+		
 		self.start()
 		return
-		
-		
+	
+	
 	def on_stop(self):
 		self.stop()
 		return
 	
+	
 	def start(self):
 		if self.ready:
-			self.running = True
-			
 			self.queue_start = False
 			self.anti_afk_loop()
 		else:
 			self.queue_start = True
 		return
 	
+	
 	def stop(self):
-		self.running = False
-		
 		if self.anti_afk_task:
 			self.ticker.remove(self.anti_afk_task)
 			self.anti_afk_task = None
 		return
+	
 	
 	def anti_afk_loop(self):
 		if not self.running:
@@ -149,10 +145,12 @@ class AntiAfkBot(Bots):
 		ticker_loop()
 		return
 	
+	
 	def get_delay(self):
 		if self.config["randomize"]["enabled"]:
 			return random.randint(self.config["frequency"] * self.config["randomize"]["enabled"], self.config["frequency"])
 		return self.config["frequency"]
+	
 	
 	# packet handling
 	def packet_update_health(self, buff):
@@ -161,6 +159,7 @@ class AntiAfkBot(Bots):
 		if self.running and hp <= 0:
 			self.ticker.add_delay(20, self.respawn)
 		return
+	
 	
 	# TODO: move auto respawn to a sperate plugin to handle low hp
 	def respawn(self):
