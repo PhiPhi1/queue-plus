@@ -1,25 +1,21 @@
 {
   "bots": [
     {
-      "package": "anti_afk_copy",
+      "package": "anti_afk",
       "class": "AntiAfkBot"
-    },
-    {
-      "package": "callback_testing",
-      "class": "CallbackTestingBot"
     }
   ],
   "accounts": [
     {
-      "username": "MydCoolName",
+      "username": "MyCoolName",
       "bots": [
-        "callback_testing"
+        "anti_afk"
       ]
     },
     {
       "username": "MyCoolOtherName",
       "bots": [
-        "callback_testing"
+        "anti_afk"
       ]
     }
   ]

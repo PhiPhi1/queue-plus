@@ -113,7 +113,7 @@ def get_bot_classes(self):
 
 
 def get_loaded_bot(self, bot_class):
-	for bot in list(self.bots):
-		if isinstance(self.bots[bot]["protocol"], bot_class):
-			return self.bots[bot]["protocol"]
+	for bot in self.bots:
+		if isinstance(bot, bot_class):
+			return bot
 	return None

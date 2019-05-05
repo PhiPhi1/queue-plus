@@ -41,8 +41,8 @@ def add_forwarding_bridge(self, bridge):
 
 def remove_forwarding_bridge(self, bridge):
 	self.logger.debug("removing bridge")
-	self.bots.on_bridge_remove(bridge)
 	
 	self.factory.remove_control(bridge)
 	self.factory.remove_bridge(bridge)
+	self.bots.on_bridge_remove(bridge)
 	return
