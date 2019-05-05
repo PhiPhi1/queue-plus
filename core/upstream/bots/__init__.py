@@ -43,8 +43,9 @@ class UpstreamBots:
 		self.player_username = None
 		
 		self.bots = {}
-		self.bot_info = self.get_bots()
 		self.protocol = protocol
+		
+		self.bot_info = self.get_bots()
 	
 	
 	def route_bot_packet(self, buff, name):
@@ -55,28 +56,6 @@ class UpstreamBots:
 	
 	
 	def update_bots(self):
-		bot_classes = self.get_bot_classes()
-		
-		for bot_class in bot_classes:
-			# checks i
-			loaded_bot = self.get_loaded_bot(bot_class)
-			
-			if (not bot_class.loading["symbiotic"]) == self.protocol.factory.bridges.__len__() > 0:
-				bot_running = False
-				if loaded_bot in self.bots:
-					bot_running = self.bots[loaded_bot]["running"]
-				
-				if (loaded_bot is not None) and bot_running:
-					self.unload_bot(loaded_bot)
-					self.protocol.logger.debug("unloading %s" % loaded_bot)
-					
-					# sets to true so it can be reloaded
-					bot_class.loading["start"] = True
-				
-				# checks if bot should be restarted
-				elif bot_class.loading["start"]:
-					self.load_bot(bot_class)
-					self.protocol.logger.debug("loaded %s" % bot_class)
-		return
+		pass
 
 

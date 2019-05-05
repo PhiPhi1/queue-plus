@@ -15,41 +15,40 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-from plugins import Plugin
+from bots import Bots
 
 
-class Bots(Plugin):
-	name = "default"
-	loading = {
-		# Load bot when upstream joins
-		"start"    : False,
-		# Run while bridge is connected
-		"symbiotic": False
-	}
-	
+class CallbackTestingBot(Bots):
 	def __init__(self, *args, **kwargs):
-		self.running = False
-		
-		super(Bots, self).__init__(*args, **kwargs)
+		self.name = "default"
+		self.loading = {
+			# Load bot when upstream joins
+			"start": True,
+			# Run while bridge is connected
+			"symbiotic": False
+		}
 	
-	def packet_received(self, buff, name):
-		method_pointer = "packet_%s" % name
-		
-		self.handle_packet(method_pointer, buff)
-		return
-
-	def send_packet(self, name, *data):
-		return self.protocol.send_packet(name, *data)
-
+	
+	def on_ready(self):
+		print("ready", self)
+	
+	def on_unload(self):
+		print("unload", self)
+	
 	def on_bridge_add(self, bridge):
-		pass
+		print("bridge added", self)
 	
 	def on_bridge_remove(self, bridge):
-		pass
+		print("bridge removed", self)
+	
+	def on_join(self):
+		print("joined", self)
+	
+	def on_leave(self):
+		print("left", self)
 	
 	def on_start(self):
-		pass
+		print("start", self)
 	
 	def on_stop(self):
-		pass
-
+		print("stop", self)

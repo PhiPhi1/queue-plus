@@ -29,13 +29,15 @@ class UpstreamProtocol(ClientProtocol):
 	
 	def __init__(self, *args, **kwargs):
 		self.core = CoreProtocol(self)
-		self.bots = UpstreamBots(self)
 		self.disconnect_message = None
 		
 		super(UpstreamProtocol, self).__init__(*args, **kwargs)
+		
+		self.bots = UpstreamBots(self)
+		self._setup()
 
-
-	def setup(self):
+	# using a different setup so it can be called after init
+	def _setup(self):
 		self.core.load_plugins(get_plugins())
 		self.core.on_ready_plugins()
 		
