@@ -53,4 +53,5 @@ class UpstreamBots:
 		buff.save()
 		for bot in list(self.bots):
 			bot.packet_received(buff, name)
+			buff.restore()
 		return
