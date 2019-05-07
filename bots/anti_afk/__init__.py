@@ -42,6 +42,8 @@ class AntiAfkBot(Bots):
 		self.queue_start = False
 		self.ready = False
 		
+		self.username = None
+		
 		path = "bots/anti_afk/config.json"
 		with open(path) as config_file:
 			self.config = json.load(config_file)
@@ -57,6 +59,7 @@ class AntiAfkBot(Bots):
 		
 		self.ready = True
 		
+		buff.discard()
 		if self.queue_start:
 			self.start()
 		return
@@ -65,6 +68,10 @@ class AntiAfkBot(Bots):
 	def on_join(self):
 		self.ticker.add_loop(1, self.update_player_inc)
 		self.ticker.add_loop(20, self.update_player_full)
+		
+		from plugins.upstream.player_info import PlayerInfoPlugin
+		player_info = self.protocol.core.get_plugin(PlayerInfoPlugin)
+		self.username = player_info.player_username
 	
 	
 	def on_start(self):
@@ -105,6 +112,8 @@ class AntiAfkBot(Bots):
 		if not self.running:
 			self.stop()
 			return
+		
+		self.send_packet("chat_message", self.buff_type.pack_string("/msg %s ** ANTI AFK MESSAGE **" % self.username))
 		
 		self.walk_cycle()
 		self.anti_afk_task = self.ticker.add_delay(self.config["frequency"], self.anti_afk_loop)
