@@ -26,7 +26,7 @@ from bots import Bots
 class AntiAfkBot(Bots):
 	loading = {
 		# Load bot when upstream joins
-		"start"    : True,
+		"start": True,
 		# Run while bridge is connected
 		"symbiotic": False
 	}
@@ -44,7 +44,7 @@ class AntiAfkBot(Bots):
 		path = "bots/anti_afk/config.json"
 		with open(path) as config_file:
 			self.config = json.load(config_file)
-			
+	
 	
 	def packet_player_position_and_look(self, buff):
 		x, y, z, _, _, _ = buff.unpack("dddffb")
@@ -131,7 +131,7 @@ class AntiAfkBot(Bots):
 		# only making it part of the class because I dont want to use global
 		self.walk_cycle_index = 0
 		
-		
+
 		def ticker_loop():
 			walk(sequence[self.walk_cycle_index])
 			
@@ -151,7 +151,6 @@ class AntiAfkBot(Bots):
 			return random.randint(self.config["frequency"] * self.config["randomize"]["enabled"], self.config["frequency"])
 		return self.config["frequency"]
 	
-	
 	# packet handling
 	def packet_update_health(self, buff):
 		hp = buff.unpack("f")
@@ -159,7 +158,6 @@ class AntiAfkBot(Bots):
 		if self.running and hp <= 0:
 			self.ticker.add_delay(20, self.respawn)
 		return
-	
 	
 	# TODO: move auto respawn to a sperate plugin to handle low hp
 	def respawn(self):

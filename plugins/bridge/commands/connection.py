@@ -77,6 +77,7 @@ def command_disconnect(self, params):
 
 	self.send_response("§cClosed session %s" % session_index)
 	sessions[session_index].close()
+	sessions[session_index].factory.stopTrying()
 
 
 def command_reconnect(self, params):
@@ -97,10 +98,10 @@ def command_reconnect(self, params):
 	
 	self.send_response("§aReconnecting account %s" % account_index)
 	
-	def successfulConnection(*args, **kwargs):
+	def successful_connection(*args, **kwargs):
 		self.send_response("§aAccount %s has successfully reconnected" % account_index)
 	
-	self.upstream_controller.load_account(accounts[account_index], callback=successfulConnection)
+	self.upstream_controller.load_account(accounts[account_index], callback=successful_connection)
 
 
 def check_if_void(self):

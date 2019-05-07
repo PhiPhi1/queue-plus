@@ -90,7 +90,6 @@ class UpstreamProtocol(ClientProtocol):
 			bridge.upstream_disconnected()
 				
 		super(UpstreamProtocol, self).close(reason)
-		self.factory.stopTrying()
 		del self
 		
 	def packet_login_disconnect(self, buff):
