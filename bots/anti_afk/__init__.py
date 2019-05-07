@@ -38,6 +38,7 @@ class AntiAfkBot(Bots):
 		self.walk_cycle_running = False
 		self.anti_afk_task = None
 		self.player_position = glm.vec3(0, 0, 0)
+		self.player_look = glm.vec2(0, 0)
 		self.queue_start = False
 		self.ready = False
 		
@@ -47,9 +48,10 @@ class AntiAfkBot(Bots):
 	
 	
 	def packet_player_position_and_look(self, buff):
-		x, y, z, _, _, _ = buff.unpack("dddffb")
+		x, y, z, x_rot, y_rot, _ = buff.unpack("dddffb")
 		tp_id = buff.unpack_varint()
 		self.player_position = glm.vec3(x, y, z)
+		self.player_look = glm.vec2(x_rot, y_rot)
 		if self.running:
 			self.protocol.send_packet("teleport_confirm", self.buff_type.pack_varint(tp_id))
 		
@@ -58,6 +60,11 @@ class AntiAfkBot(Bots):
 		if self.queue_start:
 			self.start()
 		return
+	
+	
+	def on_join(self):
+		self.ticker.add_loop(1, self.update_player_inc)
+		self.ticker.add_loop(20, self.update_player_full)
 	
 	
 	def on_start(self):
@@ -163,3 +170,13 @@ class AntiAfkBot(Bots):
 	def respawn(self):
 		self.protocol.send_packet("client_status", self.buff_type.pack_varint(0))
 		return
+
+	def update_player_inc(self):
+		if self.running:
+			self.send_packet("player", self.buff_type.pack('?', True))
+
+	def update_player_full(self):
+		x, y, z = self.player_position
+		x_rot, y_rot = self.player_look
+		if self.running:
+			self.send_packet("player_position_and_look", self.buff_type.pack('dddff?', Decimal(x), Decimal(y), Decimal(z), float(x_rot), float(y_rot), True))
