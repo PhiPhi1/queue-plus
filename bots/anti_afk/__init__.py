@@ -26,7 +26,7 @@ from bots import Bots
 class AntiAfkBot(Bots):
 	loading = {
 		# Load bot when upstream joins
-		"start"    : True,
+		"start": True,
 		# Run while bridge is connected
 		"symbiotic": False
 	}
@@ -38,26 +38,40 @@ class AntiAfkBot(Bots):
 		self.walk_cycle_running = False
 		self.anti_afk_task = None
 		self.player_position = glm.vec3(0, 0, 0)
+		self.player_look = glm.vec2(0, 0)
 		self.queue_start = False
 		self.ready = False
+		
+		self.username = None
 		
 		path = "bots/anti_afk/config.json"
 		with open(path) as config_file:
 			self.config = json.load(config_file)
-			
+	
 	
 	def packet_player_position_and_look(self, buff):
-		x, y, z, _, _, _ = buff.unpack("dddffb")
+		x, y, z, x_rot, y_rot, _ = buff.unpack("dddffb")
 		tp_id = buff.unpack_varint()
 		self.player_position = glm.vec3(x, y, z)
+		self.player_look = glm.vec2(x_rot, y_rot)
 		if self.running:
 			self.protocol.send_packet("teleport_confirm", self.buff_type.pack_varint(tp_id))
 		
 		self.ready = True
 		
+		buff.discard()
 		if self.queue_start:
 			self.start()
 		return
+	
+	
+	def on_join(self):
+		self.ticker.add_loop(1, self.update_player_inc)
+		self.ticker.add_loop(20, self.update_player_full)
+		
+		from plugins.upstream.player_info import PlayerInfoPlugin
+		player_info = self.protocol.core.get_plugin(PlayerInfoPlugin)
+		self.username = player_info.player_username
 	
 	
 	def on_start(self):
@@ -99,6 +113,8 @@ class AntiAfkBot(Bots):
 			self.stop()
 			return
 		
+		self.send_packet("chat_message", self.buff_type.pack_string("/msg %s ** ANTI AFK MESSAGE **" % self.username))
+		
 		self.walk_cycle()
 		self.anti_afk_task = self.ticker.add_delay(self.config["frequency"], self.anti_afk_loop)
 	
@@ -131,7 +147,7 @@ class AntiAfkBot(Bots):
 		# only making it part of the class because I dont want to use global
 		self.walk_cycle_index = 0
 		
-		
+
 		def ticker_loop():
 			walk(sequence[self.walk_cycle_index])
 			
@@ -151,7 +167,6 @@ class AntiAfkBot(Bots):
 			return random.randint(self.config["frequency"] * self.config["randomize"]["enabled"], self.config["frequency"])
 		return self.config["frequency"]
 	
-	
 	# packet handling
 	def packet_update_health(self, buff):
 		hp = buff.unpack("f")
@@ -160,8 +175,17 @@ class AntiAfkBot(Bots):
 			self.ticker.add_delay(20, self.respawn)
 		return
 	
-	
 	# TODO: move auto respawn to a sperate plugin to handle low hp
 	def respawn(self):
 		self.protocol.send_packet("client_status", self.buff_type.pack_varint(0))
 		return
+
+	def update_player_inc(self):
+		if self.running:
+			self.send_packet("player", self.buff_type.pack('?', True))
+
+	def update_player_full(self):
+		x, y, z = self.player_position
+		x_rot, y_rot = self.player_look
+		if self.running:
+			self.send_packet("player_position_and_look", self.buff_type.pack('dddff?', Decimal(x), Decimal(y), Decimal(z), float(x_rot), float(y_rot), True))
