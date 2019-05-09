@@ -15,38 +15,35 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-from plugins import Plugin
+import base64
+import json
+
+from plugins.downstream import DownstreamPlugin
 
 
-class DownstreamPlugin(Plugin):
-	def packet_received(self, buff, name):
-		self.mirror_packet(buff, name)
-		method_pointer = "packet_%s" % name
+class ServerListPlugin(DownstreamPlugin):
+	img_path = "plugins/downstream/server_list/server-icon.png"
+	
+	def packet_status_request(self, buff):
+		with open(self.img_path, "rb") as image_file:
+			encoded_image = base64.b64encode(image_file.read())
+
+		out = {
+			"version": {
+				"name": self.protocol.factory.minecraft_versions.get(self.config["version"], "???"),
+				"protocol": self.config["version"]
+			},
+			"players": {
+				"max": self.protocol.factory.max_players,
+				"online": self.protocol.factory.players.__len__(),
+				"sample": []
+			},
+			"description": {
+				"text": "§9Queue §7Plus"
+			},
+			"favicon": "data:image/png;base64,%s" % str(encoded_image, "ascii")
+		}
 		
-		return self.handle_packet(method_pointer, buff)
-	
-	
-	def mirror_packet(self, buff, name):
-		method_pointer = "packet_mirror_%s" % name
-		
-		self.handle_packet(method_pointer, buff)
-		return
-	
-	
-	def send_packet(self, name, *data):
-		self.protocol.send_packet(name, *data)
-		return
+		out_json = json.dumps(out)
 
-
-def get_plugins():
-	from plugins.downstream.player_info import PlayerInfoPlugin
-	from plugins.downstream.always_alive import AlwaysAlivePlugin
-	from plugins.downstream.whitelist import WhitelistPlugin
-	from plugins.downstream.server_list import ServerListPlugin
-	
-	return [
-		PlayerInfoPlugin,
-		AlwaysAlivePlugin,
-		WhitelistPlugin,
-		ServerListPlugin
-	]
+		self.send_packet("status_response", self.buff_type.pack_string(out_json))
