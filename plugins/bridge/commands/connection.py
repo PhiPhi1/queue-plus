@@ -35,9 +35,16 @@ def command_connect(self, params):
 		self.send_error("Invalid session ID")
 		return
 	
+	session = sessions[session_index]
+	
+	if session.factory.bridges.__len__() > 0:
+		username = session.factory.bridges[0].downstream.display_name
+		self.send_error("Looks like %s is already connected." % username)
+		return
+	
 	self.send_response("§6Switching sessions")
 	self.bridge.switching_protocol = True
-	self.bridge.switch_protocol(sessions[session_index])
+	self.bridge.switch_protocol(session)
 	
 	self.send_response("§6Loading cache")
 	from plugins.bridge.hot_swap import HotSwapPlugin
