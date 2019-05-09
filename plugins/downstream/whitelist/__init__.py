@@ -61,18 +61,16 @@ class WhitelistPlugin(DownstreamPlugin):
 			return
 		
 		for account in self.whitelist:
-			if self.config["server"]["online"]:
-				if account["uuid"] == self.protocol.real_uuid.to_hex():
-					return
-			else:
-				if account["ip"] == self.protocol.remote_addr.host:
-					return
+			username_match = account["username"] == self.protocol.display_name or account["username"] == "*"
+			uuid_match = account["uuid"] == self.protocol.real_uuid.to_hex() or account["uuid"] == "*"
+			ip_match = account["ip"] == self.protocol.remote_addr.host or account["uuid"] == "*"
+			
+			if username_match and uuid_match and ip_match:
+				return
+			
 		self.protocol.close("You are not whitelisted.")
 	
-	def add_to_whitelist(self, username, uuid, ip=None):
-		if not ip:
-			ip = "none"
-		
+	def add_to_whitelist(self, username, uuid, ip="*"):
 		fields = "%s,%s,%s\n" % (username, uuid, ip)
 		with open(self.path, 'a') as fd:
 			fd.write(fields)
