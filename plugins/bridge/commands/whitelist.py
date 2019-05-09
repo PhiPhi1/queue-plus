@@ -19,7 +19,7 @@
 
 def command_pwhitelist(self, params):
 	if not params.__len__() > 0:
-		self.send_error("/pwhitelist <add|remove|disable|enable>")
+		self.send_error("/pwhitelist <add | remove | disable | enable>")
 		return
 	
 	if params[0] == "add":
@@ -53,7 +53,7 @@ def command_pwhitelist(self, params):
 		self.send_response("§aWhitelist enabled.")
 		return
 	
-	self.send_error("/pwhitelist <add|remove|disable|enable>")
+	self.send_error("/pwhitelist <add | remove | disable | enable>")
 	return
 	
 	
