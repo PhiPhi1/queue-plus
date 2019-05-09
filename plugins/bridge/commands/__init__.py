@@ -24,6 +24,7 @@ class CommmandsPlugin(BridgePlugin):
 	from plugins.bridge.commands.lists import command_accounts, command_sessions
 	from plugins.bridge.commands.queue import command_hidequeue, command_showqueue
 	from plugins.bridge.commands.waiting_room import command_wait
+	from plugins.bridge.commands.whitelist import command_pwhitelist, add_to_whitelist, remove_from_whitelist, set_whitelist
 	
 	def packet_upstream_chat_message(self, buff):
 		message = buff.unpack_string()

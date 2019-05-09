@@ -41,8 +41,10 @@ class DownstreamPlugin(Plugin):
 def get_plugins():
 	from plugins.downstream.player_info import PlayerInfoPlugin
 	from plugins.downstream.always_alive import AlwaysAlivePlugin
+	from plugins.downstream.whitelist import WhitelistPlugin
 	
 	return [
 		PlayerInfoPlugin,
-		AlwaysAlivePlugin
+		AlwaysAlivePlugin,
+		WhitelistPlugin
 	]
