@@ -42,6 +42,9 @@ class DownstreamProtocol(Downstream):
 		
 	def connection_lost(self, reason=None):
 		super(ServerProtocol, self).connection_lost(reason)
+		if self.protocol_mode in ("login", "play"):
+			self.factory.players.discard(self)
+			
 		self.bridge.downstream_disconnected()
 		self.core.unload_plugins()
 		return
