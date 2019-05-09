@@ -61,3 +61,6 @@ class DownstreamProtocol(Downstream):
 	
 	def super_handle_packet(self, buff, name):
 		super(DownstreamProtocol, self).packet_received(buff, name)
+	
+	def packet_status_request(self, buff):
+		pass
