@@ -34,9 +34,9 @@ class WhitelistPlugin(DownstreamPlugin):
 				writer = csv.DictWriter(out, fieldnames=self.fields)
 				writer.writeheader()
 		
-		with open(self.plugin_config_path) as config_file:
-			self.plugin_config = json.load(config_file)
-				
+		self.plugin_config = None
+		self.get_config()
+		
 		self.whitelist = self.get_whitelist()
 		super(WhitelistPlugin, self).__init__(*args, **kwargs)
 		
@@ -51,6 +51,10 @@ class WhitelistPlugin(DownstreamPlugin):
 					"ip": row["ip"],
 				})
 		return out
+	
+	def get_config(self):
+		with open(self.plugin_config_path) as config_file:
+			self.plugin_config = json.load(config_file)
 	
 	def on_join(self):
 		if not self.plugin_config["enabled"]:
@@ -93,3 +97,11 @@ class WhitelistPlugin(DownstreamPlugin):
 		
 		self.whitelist = self.get_whitelist()
 		return True
+	
+	def set_whitelist_status(self, state):
+		self.plugin_config['enabled'] = state
+		self.write_to_plugin_config()
+	
+	def write_to_plugin_config(self):
+		with open(self.plugin_config_path, 'w') as outfile:
+			json.dump(self.plugin_config, outfile, sort_keys=True, indent=4)
