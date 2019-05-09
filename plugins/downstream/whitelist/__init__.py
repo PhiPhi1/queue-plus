@@ -62,9 +62,9 @@ class WhitelistPlugin(DownstreamPlugin):
 			return
 		
 		for account in self.whitelist:
-			username_match = account["username"] == self.protocol.display_name or account["username"] == "*"
-			uuid_match = account["uuid"] == self.protocol.real_uuid.to_hex() or account["uuid"] == "*"
-			ip_match = account["ip"] == self.protocol.remote_addr.host or account["uuid"] == "*"
+			username_match = account["username"].lower() == self.protocol.display_name.lower() or account["username"] == "*"
+			uuid_match = account["uuid"].lower() == self.protocol.real_uuid.to_hex().lower() or account["uuid"] == "*"
+			ip_match = account["ip"].lower() == self.protocol.remote_addr.host.lower() or account["uuid"] == "*"
 			
 			if username_match and uuid_match and ip_match:
 				return
@@ -73,6 +73,9 @@ class WhitelistPlugin(DownstreamPlugin):
 	
 	def add_to_whitelist(self, username, uuid, ip="*"):
 		fields = "%s,%s,%s\n" % (username, uuid, ip)
+		
+		# TODO: dont add duplicates instead return false
+		
 		with open(self.path, 'a') as fd:
 			fd.write(fields)
 		
@@ -80,6 +83,8 @@ class WhitelistPlugin(DownstreamPlugin):
 		return True
 	
 	def remove_from_whitelist(self, field, field_name):
+		field_name = field_name.lower()
+		
 		if field_name not in self.fields:
 			return False
 		
@@ -112,9 +117,13 @@ class WhitelistPlugin(DownstreamPlugin):
 			in_whitelist = list(csv.DictReader(inp))
 			
 		for account in in_whitelist:
-			username_match = account["username"] == self.protocol.display_name
+			username_match = account["username"].lower() == self.protocol.display_name.lower()
 			if not username_match:
 				continue
+			
+			if not account["username"] == self.protocol.display_name:
+				account["username"] = self.protocol.display_name
+				updated = True
 			
 			if account["uuid"] == "auto":
 				account["uuid"] = self.protocol.real_uuid.to_hex()
