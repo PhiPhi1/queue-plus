@@ -16,6 +16,7 @@
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 import csv
+import json
 from pathlib import Path
 
 from plugins.downstream import DownstreamPlugin
@@ -25,11 +26,16 @@ class WhitelistPlugin(DownstreamPlugin):
 	fields = ["username", "uuid", "ip"]
 	path = "plugins/downstream/whitelist/whitelist.csv"
 	
+	plugin_config_path = "plugins/downstream/whitelist/config.json"
+	
 	def __init__(self, *args, **kwargs):
 		if not Path(self.path).is_file():
 			with open(self.path, 'w', newline='') as out:
 				writer = csv.DictWriter(out, fieldnames=self.fields)
 				writer.writeheader()
+		
+		with open(self.plugin_config_path) as config_file:
+			self.plugin_config = json.load(config_file)
 				
 		self.whitelist = self.get_whitelist()
 		super(WhitelistPlugin, self).__init__(*args, **kwargs)
@@ -47,6 +53,9 @@ class WhitelistPlugin(DownstreamPlugin):
 		return out
 	
 	def on_join(self):
+		if not self.plugin_config["enabled"]:
+			return
+		
 		for account in self.whitelist:
 			if self.config["server"]["online"]:
 				if account["uuid"] == self.protocol.real_uuid.to_hex():
