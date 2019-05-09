@@ -36,13 +36,16 @@ class WhitelistPlugin(DownstreamPlugin):
 				out.append({
 					"username": row["username"],
 					"uuid": row["uuid"],
+					"ip": row["ip"],
 				})
 		return out
 	
 	def on_join(self):
-		print(self.protocol.real_uuid)
 		for account in self.whitelist:
-			if account["uuid"] == self.protocol.real_uuid.to_hex():
-				print("found account")
-				return
+			if self.config["server"]["online"]:
+				if account["uuid"] == self.protocol.real_uuid.to_hex():
+					return
+			else:
+				if account["ip"] == self.protocol.remote_addr.host:
+					return
 		self.protocol.close("You are not whitelisted.")
