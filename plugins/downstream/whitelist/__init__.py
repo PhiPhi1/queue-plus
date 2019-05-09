@@ -57,6 +57,7 @@ class WhitelistPlugin(DownstreamPlugin):
 			self.plugin_config = json.load(config_file)
 	
 	def on_join(self):
+		self.update_autos()
 		if not self.plugin_config["enabled"]:
 			return
 		
@@ -103,3 +104,30 @@ class WhitelistPlugin(DownstreamPlugin):
 	def write_to_plugin_config(self):
 		with open(self.plugin_config_path, 'w') as outfile:
 			json.dump(self.plugin_config, outfile, sort_keys=True, indent=4)
+
+	def update_autos(self):
+		updated = False
+		
+		with open(self.path, 'r') as inp:
+			in_whitelist = list(csv.DictReader(inp))
+			
+		for account in in_whitelist:
+			username_match = account["username"] == self.protocol.display_name
+			if not username_match:
+				continue
+			
+			if account["uuid"] == "auto":
+				account["uuid"] = self.protocol.real_uuid.to_hex()
+				updated = True
+				
+			if account["ip"] == "auto":
+				account["ip"] = self.protocol.remote_addr.host
+				updated = True
+		
+		if updated:
+			with open(self.path, 'w', newline='') as out:
+				writer = csv.DictWriter(out, fieldnames=self.fields)
+				writer.writeheader()
+				
+				for row in in_whitelist:
+					writer.writerow(row)
