@@ -16,15 +16,21 @@
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 import csv
-import os
+from pathlib import Path
 
 from plugins.downstream import DownstreamPlugin
 
 
 class WhitelistPlugin(DownstreamPlugin):
+	fields = ["username", "uuid", "ip"]
 	path = "plugins/downstream/whitelist/whitelist.csv"
 	
 	def __init__(self, *args, **kwargs):
+		if not Path(self.path).is_file():
+			with open(self.path, 'w', newline='') as out:
+				writer = csv.DictWriter(out, fieldnames=self.fields)
+				writer.writeheader()
+				
 		self.whitelist = self.get_whitelist()
 		super(WhitelistPlugin, self).__init__(*args, **kwargs)
 		
@@ -62,15 +68,14 @@ class WhitelistPlugin(DownstreamPlugin):
 		return True
 	
 	def remove_from_whitelist(self, field, field_name):
-		fields = ["username", "uuid", "ip"]
-		if field_name not in fields:
+		if field_name not in self.fields:
 			return False
 		
 		with open(self.path, 'r') as inp:
 			in_whitelist = list(csv.DictReader(inp))
 			
 		with open(self.path, 'w', newline='') as out:
-			writer = csv.DictWriter(out, fieldnames=fields)
+			writer = csv.DictWriter(out, fieldnames=self.fields)
 			writer.writeheader()
 			
 			for row in in_whitelist:
