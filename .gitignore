@@ -111,3 +111,6 @@ venv.bak/
 data/
 
 start\.bat
+
+*.rar
+plugins/downstream/whitelist/whitelist\.csv

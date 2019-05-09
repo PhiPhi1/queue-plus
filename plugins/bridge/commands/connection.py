@@ -35,9 +35,16 @@ def command_connect(self, params):
 		self.send_error("Invalid session ID")
 		return
 	
+	session = sessions[session_index]
+	
+	if session.factory.bridges.__len__() > 0:
+		username = session.factory.bridges[0].downstream.display_name
+		self.send_error("Looks like %s is already connected." % username)
+		return
+	
 	self.send_response("§6Switching sessions")
 	self.bridge.switching_protocol = True
-	self.bridge.switch_protocol(sessions[session_index])
+	self.bridge.switch_protocol(session)
 	
 	self.send_response("§6Loading cache")
 	from plugins.bridge.hot_swap import HotSwapPlugin
@@ -77,6 +84,7 @@ def command_disconnect(self, params):
 
 	self.send_response("§cClosed session %s" % session_index)
 	sessions[session_index].close()
+	sessions[session_index].factory.stopTrying()
 
 
 def command_reconnect(self, params):
@@ -97,10 +105,10 @@ def command_reconnect(self, params):
 	
 	self.send_response("§aReconnecting account %s" % account_index)
 	
-	def successfulConnection(*args, **kwargs):
+	def successful_connection(*args, **kwargs):
 		self.send_response("§aAccount %s has successfully reconnected" % account_index)
 	
-	self.upstream_controller.load_account(accounts[account_index], callback=successfulConnection)
+	self.upstream_controller.load_account(accounts[account_index], callback=successful_connection)
 
 
 def check_if_void(self):
