@@ -15,36 +15,34 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
-from plugins import Plugin
+import csv
+
+from plugins.downstream import DownstreamPlugin
 
 
-class DownstreamPlugin(Plugin):
-	def packet_received(self, buff, name):
-		self.mirror_packet(buff, name)
-		method_pointer = "packet_%s" % name
+class WhitelistPlugin(DownstreamPlugin):
+	path = "plugins/downstream/whitelist/whitelist.csv"
+	
+	def __init__(self, *args, **kwargs):
+		self.whitelist = self.get_whitelist()
+		print(self.whitelist)
+		super(WhitelistPlugin, self).__init__(*args, **kwargs)
 		
-		return self.handle_packet(method_pointer, buff)
+	def get_whitelist(self):
+		out = []
+		with open(self.path, newline="") as _accounts_csv:
+			_accounts = csv.DictReader(_accounts_csv)
+			for index, row in enumerate(_accounts):
+				out.append({
+					"username": row["username"],
+					"uuid": row["uuid"],
+				})
+		return out
 	
-	
-	def mirror_packet(self, buff, name):
-		method_pointer = "packet_mirror_%s" % name
-		
-		self.handle_packet(method_pointer, buff)
-		return
-	
-	
-	def send_packet(self, name, *data):
-		self.protocol.send_packet(name, *data)
-		return
-
-
-def get_plugins():
-	from plugins.downstream.player_info import PlayerInfoPlugin
-	from plugins.downstream.always_alive import AlwaysAlivePlugin
-	from plugins.downstream.whitelist import WhitelistPlugin
-	
-	return [
-		PlayerInfoPlugin,
-		AlwaysAlivePlugin,
-		WhitelistPlugin
-	]
+	def on_join(self):
+		print(self.protocol.real_uuid)
+		for account in self.whitelist:
+			if account["uuid"] == self.protocol.real_uuid.to_hex():
+				print("found account")
+				return
+		self.protocol.close("You are not whitelisted.")

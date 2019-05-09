@@ -30,6 +30,7 @@ class DownstreamProtocol(Downstream):
 	def __init__(self, *args, **kwargs):
 		self.core = CoreProtocol(self)
 		self._uuid = UUID.random()
+		self.real_uuid = None
 		
 		super(DownstreamProtocol, self).__init__(*args, **kwargs)
 	
@@ -46,7 +47,9 @@ class DownstreamProtocol(Downstream):
 		return
 	
 	def player_joined(self):
+		self.real_uuid = self.uuid
 		self.uuid = self._uuid
+		
 		super(DownstreamProtocol, self).player_joined()
 		self.core.on_join_plugins()
 		return
