@@ -16,6 +16,7 @@
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
 import csv
+import os
 
 from plugins.downstream import DownstreamPlugin
 
@@ -25,7 +26,6 @@ class WhitelistPlugin(DownstreamPlugin):
 	
 	def __init__(self, *args, **kwargs):
 		self.whitelist = self.get_whitelist()
-		print(self.whitelist)
 		super(WhitelistPlugin, self).__init__(*args, **kwargs)
 		
 	def get_whitelist(self):
@@ -49,3 +49,33 @@ class WhitelistPlugin(DownstreamPlugin):
 				if account["ip"] == self.protocol.remote_addr.host:
 					return
 		self.protocol.close("You are not whitelisted.")
+	
+	def add_to_whitelist(self, username, uuid, ip=None):
+		if not ip:
+			ip = "none"
+		
+		fields = "%s,%s,%s\n" % (username, uuid, ip)
+		with open(self.path, 'a') as fd:
+			fd.write(fields)
+		
+		self.whitelist = self.get_whitelist()
+		return True
+	
+	def remove_from_whitelist(self, field, field_name):
+		fields = ["username", "uuid", "ip"]
+		if field_name not in fields:
+			return False
+		
+		with open(self.path, 'r') as inp:
+			in_whitelist = list(csv.DictReader(inp))
+			
+		with open(self.path, 'w', newline='') as out:
+			writer = csv.DictWriter(out, fieldnames=fields)
+			writer.writeheader()
+			
+			for row in in_whitelist:
+				if row[field_name] != field:
+					writer.writerow(row)
+		
+		self.whitelist = self.get_whitelist()
+		return True
