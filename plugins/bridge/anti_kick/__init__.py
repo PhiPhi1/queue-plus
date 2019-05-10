@@ -15,19 +15,21 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+from decimal import Decimal
 from plugins.bridge import BridgePlugin
 import glm
 
 
 class AntiKickPlugin(BridgePlugin):
-	player_state_loop = None
+	player_on_ground_loop = None
 	player_full_update_loop = None
 	player_position = None
 	player_look = None
 	on_ground = None
 	
 	def on_join(self):
-		pass
+		self.player_on_ground_loop = self.ticker.add_loop(1, self.on_ground_cb)
+		self.player_full_update_loop = self.ticker.add_loop(20, self.full_pos_callback)
 	
 	def packet_mirror_downstream_player_position_and_look(self, buff):
 		x, y, z, x_rot, y_rot, _ = buff.unpack("dddffb")
@@ -51,3 +53,15 @@ class AntiKickPlugin(BridgePlugin):
 		x_rot, y_rot, self.on_ground = buff.unpack("ff?")
 		self.player_look = glm.vec2(x_rot, y_rot)
 		return
+	
+	def on_ground_cb(self):
+		if self.on_ground:
+			self.bridge.packet_received(self.buff_type(self.buff_type.pack('?', self.on_ground)), "upstream", "player")
+
+	def full_pos_callback(self):
+		if self.player_look and self.player_position and self.on_ground:
+			x, y, z = self.player_position
+			x_rot, y_rot = self.player_look
+			
+			self.bridge.packet_received(self.buff_type(self.buff_type.pack('dddff?', Decimal(x), Decimal(y), Decimal(z), float(x_rot), float(y_rot), self.on_ground)),
+																	"upstream", "player_position_and_look")
