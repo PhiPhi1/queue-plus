@@ -47,9 +47,10 @@ class CoreProtocol:
 		return
 	
 	def unload_plugins(self):
-		for index, plugin in enumerate(self.plugins):
+		for plugin in self.plugins:
 			plugin.on_unload()
-			del self.plugins[index]
+		for plugin in self.plugins:
+			self.plugins.remove(plugin)
 		return
 
 	def get_plugin(self, plugin_class):

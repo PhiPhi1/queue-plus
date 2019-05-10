@@ -152,5 +152,5 @@ class QueueBossBarPlugin(BridgePlugin):
 		return QuarryUUID.from_hex(py_uuid.uuid4().hex)
 
 	def on_unload(self):
-		for session in self.watched_protocols:
+		for session in list(self.watched_protocols):
 			self.removed_watched_protocol(session)
