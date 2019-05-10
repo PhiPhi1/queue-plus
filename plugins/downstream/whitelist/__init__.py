@@ -72,9 +72,12 @@ class WhitelistPlugin(DownstreamPlugin):
 		self.protocol.close("You are not whitelisted.")
 	
 	def add_to_whitelist(self, username, uuid, ip="*"):
-		fields = "%s,%s,%s\n" % (username, uuid, ip)
+		whitelist = self.get_whitelist()
+		for account in whitelist:
+			if account["username"] == username and account["uuid"] == uuid and account["ip"] == ip:
+				return False
 		
-		# TODO: dont add duplicates instead return false
+		fields = "%s,%s,%s\n" % (username, uuid, ip)
 		
 		with open(self.path, 'a') as fd:
 			fd.write(fields)
