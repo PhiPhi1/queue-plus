@@ -1,7 +1,7 @@
 ; this installation file was written in inno setup
 
 #define MyAppName "Queue Plus"
-#define MyAppVersion "v0.3.1 [Alpha]"
+#define MyAppVersion "v0.3.2 [Alpha]"
 #define MyAppPublisher "The Emperium"
 #define MyAppURL "https://github.com/the-emperium"
 
@@ -31,7 +31,7 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\Users\Akiva\PycharmProjects\queue-plus\*"; Excludes: ".idea,__pycache__,\data\*,*.md,*.spec,*.manifest,.gitignore,start.bat"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\Akiva\PycharmProjects\queue-plus\*"; Excludes: ".idea,__pycache__,\data\*,*.md,*.spec,*.manifest,.gitignore,start.bat,whitelist.csv"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Run]
 Filename: "{app}\installation\windows\postinstall.bat"; WorkingDir: "{app}"; Parameters: """{code:PythonPath}"""; Flags: runascurrentuser runhidden waituntilterminated

@@ -1,5 +1,5 @@
 # Queue Plus
-version: ALPHA v0.3.1
+version: ALPHA v0.3.2
 ### features:
 - plugins
 - hot swappable accounts
@@ -9,6 +9,7 @@ version: ALPHA v0.3.1
 - queue boss bar
 - account connection management
 - anti-afk
+- anti-kick
 - auto-reconnect
 - bots
 - whitelist
@@ -23,10 +24,10 @@ version: ALPHA v0.3.1
 - ```/wait [<account id>]```: sends you to a waiting server with the login info of the account id, if no account is input it will default to the first one
 - ```/disconnect [<session id>]```: disconnects a session, if none is input it will disconnect the current one
 - ```/reconnect <account id>```: reconnects a session by account id. ***warning: there are no protections against connecting an already connected account***
-- ```/pwhitelist <add|remove|disable|enable>```: sets up a whitelist. Use "*" as a wildcard for a variable and "auto" to automatically set a username uuid or ip.
+- ```/pwhitelist <add|remove|disable|enable|list>```: sets up a whitelist. Use "*" as a wildcard for a variable and "auto" to automatically set a username uuid or ip.
 ## installation
 ### automatic
-- [Windows](https://github.com/the-emperium/queue-plus/releases/tag/0.3.1)
+- [Windows](https://github.com/the-emperium/queue-plus/releases/tag/0.3.2)
 ### manual
 - [installation guide](https://github.com/the-emperium/queue-plus/blob/master/install.md)
 ## configuration
