@@ -1,7 +1,7 @@
 ; this installation file was written in inno setup
 
 #define MyAppName "Queue Plus"
-#define MyAppVersion "v0.3.1 [Alpha]"
+#define MyAppVersion "v0.3.2 [Alpha]"
 #define MyAppPublisher "The Emperium"
 #define MyAppURL "https://github.com/the-emperium"
 
