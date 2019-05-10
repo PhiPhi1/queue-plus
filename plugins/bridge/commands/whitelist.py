@@ -19,30 +19,27 @@
 
 def command_pwhitelist(self, params):
 	if not params.__len__() > 0:
-		self.send_error("/pwhitelist <add | remove | disable | enable>")
+		self.send_error("/pwhitelist <add | remove | disable | enable | list>")
 		return
 	
 	if params[0] == "add":
-		if not params.__len__() >= 4:
-			self.send_error("/pwhitelist add <username> <uuid> <ip>")
+		if not (4 >= params.__len__() >= 2):
+			self.send_error("/pwhitelist add <username> [<uuid>] [<ip>]")
 			return
 		
-		self.add_to_whitelist(params[1], params[2], params[3])
+		if params.__len__() == 2:
+			self.add_to_whitelist(params[1], "auto", "auto")
+		elif params.__len__() == 3:
+			self.add_to_whitelist(params[1], params[2], "auto")
+		elif params.__len__() == 4:
+			self.add_to_whitelist(params[1], params[2], params[3])
 		return
 	elif params[0] == "remove":
-		if not params.__len__() >= 3:
+		if not params.__len__() == 3:
 			self.send_error("/pwhitelist remove <field name> <field value>")
 			return
 		
 		self.remove_from_whitelist(params[2], params[1])
-		return
-	elif params[0] == "disable":
-		if params.__len__() > 1:
-			self.send_error("/pwhitelist disable")
-			return
-		
-		self.set_whitelist(False)
-		self.send_response("§aWhitelist disabled.")
 		return
 	elif params[0] == "enable":
 		if params.__len__() > 1:
@@ -52,8 +49,23 @@ def command_pwhitelist(self, params):
 		self.set_whitelist(True)
 		self.send_response("§aWhitelist enabled.")
 		return
+	elif params[0] == "disable":
+		if params.__len__() > 1:
+			self.send_error("/pwhitelist disable")
+			return
+		
+		self.set_whitelist(False)
+		self.send_response("§aWhitelist disabled.")
+		return
+	elif params[0] == "list":
+		if params.__len__() > 1:
+			self.send_error("/pwhitelist list")
+			return
+		
+		self.list_whitelist()
+		return
 	
-	self.send_error("/pwhitelist <add | remove | disable | enable>")
+	self.send_error("/pwhitelist <add | remove | disable | enable | list>")
 	return
 	
 	
@@ -88,3 +100,17 @@ def set_whitelist(self, state):
 	whitelist = self.bridge.downstream.core.get_plugin(WhitelistPlugin)
 	
 	whitelist.set_whitelist_status(state)
+
+
+def list_whitelist(self):
+	from plugins.downstream.whitelist import WhitelistPlugin
+	whitelist_plugin = self.bridge.downstream.core.get_plugin(WhitelistPlugin)
+	whitelist = whitelist_plugin.get_whitelist()
+	
+	if not whitelist.__len__() > 0:
+		self.send_error("No accounts are currently whitelisted.")
+		return
+	
+	self.send_response("§aWhitelisted Accounts:")
+	for account in whitelist:
+		self.send_response("§a[%s]: %s" % (account["uuid"].upper(), account["username"]))
