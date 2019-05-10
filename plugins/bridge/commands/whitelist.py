@@ -19,7 +19,7 @@
 
 def command_pwhitelist(self, params):
 	if not params.__len__() > 0:
-		self.send_error("/pwhitelist <add | remove | disable | enable>")
+		self.send_error("/pwhitelist <add | remove | disable | enable | list>")
 		return
 	
 	if params[0] == "add":
@@ -36,14 +36,6 @@ def command_pwhitelist(self, params):
 		
 		self.remove_from_whitelist(params[2], params[1])
 		return
-	elif params[0] == "disable":
-		if params.__len__() > 1:
-			self.send_error("/pwhitelist disable")
-			return
-		
-		self.set_whitelist(False)
-		self.send_response("§aWhitelist disabled.")
-		return
 	elif params[0] == "enable":
 		if params.__len__() > 1:
 			self.send_error("/pwhitelist enable")
@@ -52,8 +44,23 @@ def command_pwhitelist(self, params):
 		self.set_whitelist(True)
 		self.send_response("§aWhitelist enabled.")
 		return
+	elif params[0] == "disable":
+		if params.__len__() > 1:
+			self.send_error("/pwhitelist disable")
+			return
+		
+		self.set_whitelist(False)
+		self.send_response("§aWhitelist disabled.")
+		return
+	elif params[0] == "list":
+		if params.__len__() > 1:
+			self.send_error("/pwhitelist list")
+			return
+		
+		self.list_whitelist()
+		return
 	
-	self.send_error("/pwhitelist <add | remove | disable | enable>")
+	self.send_error("/pwhitelist <add | remove | disable | enable | list>")
 	return
 	
 	
@@ -88,3 +95,17 @@ def set_whitelist(self, state):
 	whitelist = self.bridge.downstream.core.get_plugin(WhitelistPlugin)
 	
 	whitelist.set_whitelist_status(state)
+
+
+def list_whitelist(self):
+	from plugins.downstream.whitelist import WhitelistPlugin
+	whitelist_plugin = self.bridge.downstream.core.get_plugin(WhitelistPlugin)
+	whitelist = whitelist_plugin.get_whitelist()
+	
+	if not whitelist.__len__() > 0:
+		self.send_error("No accounts are currently whitelisted.")
+		return
+	
+	self.send_response("§aWhitelisted Accounts:")
+	for account in whitelist:
+		self.send_response("§a[%s]: %s" % (account["uuid"].upper(), account["username"]))
