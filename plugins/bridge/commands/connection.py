@@ -62,6 +62,7 @@ def command_disconnect(self, params):
 	if not params.__len__() > 0:
 		if not self.check_if_void():
 			self.bridge.upstream.close()
+			self.bridge.upstream.factory.stopTrying()
 			self.send_response("§cClosed current session")
 		else:
 			self.send_error("Cannot disconnect The Void")
