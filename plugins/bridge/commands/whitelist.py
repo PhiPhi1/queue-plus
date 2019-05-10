@@ -23,14 +23,19 @@ def command_pwhitelist(self, params):
 		return
 	
 	if params[0] == "add":
-		if not params.__len__() >= 4:
-			self.send_error("/pwhitelist add <username> <uuid> <ip>")
+		if not (4 >= params.__len__() >= 2):
+			self.send_error("/pwhitelist add <username> [<uuid>] [<ip>]")
 			return
 		
-		self.add_to_whitelist(params[1], params[2], params[3])
+		if params.__len__() == 2:
+			self.add_to_whitelist(params[1], "auto", "auto")
+		elif params.__len__() == 3:
+			self.add_to_whitelist(params[1], params[2], "auto")
+		elif params.__len__() == 4:
+			self.add_to_whitelist(params[1], params[2], params[3])
 		return
 	elif params[0] == "remove":
-		if not params.__len__() >= 3:
+		if not params.__len__() == 3:
 			self.send_error("/pwhitelist remove <field name> <field value>")
 			return
 		
