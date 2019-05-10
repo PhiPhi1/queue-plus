@@ -37,7 +37,6 @@ class WhitelistPlugin(DownstreamPlugin):
 		self.plugin_config = None
 		self.get_config()
 		
-		self.whitelist = self.get_whitelist()
 		super(WhitelistPlugin, self).__init__(*args, **kwargs)
 		
 	def get_whitelist(self):
@@ -61,7 +60,7 @@ class WhitelistPlugin(DownstreamPlugin):
 		if not self.plugin_config["enabled"]:
 			return
 		
-		for account in self.whitelist:
+		for account in self.get_whitelist():
 			username_match = account["username"].lower() == self.protocol.display_name.lower() or account["username"] == "*"
 			uuid_match = account["uuid"].lower() == self.protocol.real_uuid.to_hex().lower() or account["uuid"] == "*"
 			ip_match = account["ip"].lower() == self.protocol.remote_addr.host.lower() or account["uuid"] == "*"
@@ -81,8 +80,7 @@ class WhitelistPlugin(DownstreamPlugin):
 		
 		with open(self.path, 'a') as fd:
 			fd.write(fields)
-		
-		self.whitelist = self.get_whitelist()
+
 		return True
 	
 	def remove_from_whitelist(self, field, field_name):
@@ -101,8 +99,7 @@ class WhitelistPlugin(DownstreamPlugin):
 			for row in in_whitelist:
 				if row[field_name] != field:
 					writer.writerow(row)
-		
-		self.whitelist = self.get_whitelist()
+
 		return True
 	
 	def set_whitelist_status(self, state):
