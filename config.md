@@ -16,6 +16,7 @@
 - plugins: all the plugins
     - log_level: set the level based on how much you want to see in the console
 - safe_disconnect: when you disconnect you wont disconnect the client
+- anti_throttle: in ms how long should be waited before connecting the next account
 - version: [protocol version of minecraft](https://wiki.vg/Protocol_version_numbers)
 #### data/accounts.csv
 following the csv format input your accounts info here. Example in the default file.

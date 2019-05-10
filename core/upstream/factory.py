@@ -30,6 +30,8 @@ class UpstreamFactory(ClientFactory, ReconnectingClientFactory):
 	account_manager = None
 	protocol_callback = None
 	
+	connection_timeout = 5
+	
 	force_protocol_version = config["version"]
 	log_level = config["client"]["log_level"]
 	

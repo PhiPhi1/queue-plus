@@ -37,7 +37,8 @@ def command_connect(self, params):
 	
 	session = sessions[session_index]
 	
-	if session.factory.bridges.__len__() > 0:
+	from headless.upstream.protocol.the_void import TheVoidProtocol
+	if session.factory.bridges.__len__() > 0 and not isinstance(session, TheVoidProtocol):
 		username = session.factory.bridges[0].downstream.display_name
 		self.send_error("Looks like %s is already connected." % username)
 		return
@@ -62,6 +63,7 @@ def command_disconnect(self, params):
 	if not params.__len__() > 0:
 		if not self.check_if_void():
 			self.bridge.upstream.close()
+			self.bridge.upstream.factory.stopTrying()
 			self.send_response("§cClosed current session")
 		else:
 			self.send_error("Cannot disconnect The Void")

@@ -62,6 +62,7 @@ def get_plugins():
 	from plugins.bridge.queue_bossbar import QueueBossBarPlugin
 	from plugins.bridge.notifications import NotificationsPlugin
 	from plugins.bridge.disconection import DisconnectionMessages
+	from plugins.bridge.anti_kick import AntiKickPlugin
 	
 	return [
 		IdCorrection,
@@ -70,5 +71,6 @@ def get_plugins():
 		QueueBossBarPlugin,
 		NotificationsPlugin,
 		WaitingServerPlugin,
-		DisconnectionMessages
+		DisconnectionMessages,
+		AntiKickPlugin
 	]

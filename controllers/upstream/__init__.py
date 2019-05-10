@@ -15,10 +15,11 @@
 #
 #      You should have received a copy of the GNU General Public License
 #      along with Queue Plus.  If not, see <https://www.gnu.org/licenses/>.
+import asyncio
 
 from quarry.net.auth import OfflineProfile, Profile
 from core.upstream.factory import UpstreamFactory
-from twisted.internet import defer
+from twisted.internet import defer, reactor
 
 from controllers import Controller
 from controllers.config import ConfigController
@@ -35,11 +36,18 @@ class UpstreamController:
 		self.sessions = Sessions()
 		
 		self.setup()
-		
+	
+	def sleep(self, secs):
+		d = defer.Deferred()
+		reactor.callLater(secs, d.callback, None)
+		return d
+	
+	@defer.inlineCallbacks
 	def setup(self):
 		new_accounts = self.accounts.check_save()
 		for account in new_accounts:
 			self.load_account(account)
+			yield self.sleep(self.config["anti_throttle"]/1000)
 	
 	def load_account(self, account_info, callback=None):
 		host = self.config["client"]["host"]
