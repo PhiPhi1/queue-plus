@@ -18,17 +18,17 @@
 
 
 def route_command(self, command_string):
-	command = command_string.split(" ")[0]
+	alias = command = command_string.split(" ")[0]
 	
 	# gives an alias to phelp command when in the void
 	from headless.upstream.factory.the_void import TheVoidProtocol
 	if isinstance(self.bridge.upstream, TheVoidProtocol):
 		if command == "help":
-			command = "phelp"
+			alias = "phelp"
 		elif command == "whitelist":
-			command = "pwhitelist"
+			alias = "pwhitelist"
 		
-	method_pointer = "command_%s" % command
+	method_pointer = "command_%s" % alias
 	handler = getattr(self, method_pointer, None)
 	if handler:
 		try:
