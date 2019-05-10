@@ -37,7 +37,8 @@ def command_connect(self, params):
 	
 	session = sessions[session_index]
 	
-	if session.factory.bridges.__len__() > 0:
+	from headless.upstream.protocol.the_void import TheVoidProtocol
+	if session.factory.bridges.__len__() > 0 and not isinstance(session, TheVoidProtocol):
 		username = session.factory.bridges[0].downstream.display_name
 		self.send_error("Looks like %s is already connected." % username)
 		return
