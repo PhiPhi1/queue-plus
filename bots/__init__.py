@@ -22,7 +22,7 @@ class Bots(Plugin):
 	name = "default"
 	loading = {
 		# Load bot when upstream joins
-		"start"    : False,
+		"start": False,
 		# Run while bridge is connected
 		"symbiotic": False
 	}

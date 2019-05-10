@@ -17,6 +17,7 @@
   "plugins": {
     "log_level": "INFO"
   },
+  "anti_throttle": 0,
   "safe_disconnect": true,
   "version": 340
 }
