@@ -81,6 +81,10 @@ def command_phelp(self, params):
 		{
 			"command": "reconnect <account id>",
 			"description": "manually reconnect an account"
+		},
+		{
+			"command": "pwhitelist <add | remove | disable | enable | list>",
+			"description": "configure whitelist"
 		}
 	]
 	
