@@ -47,3 +47,4 @@ class ServerListPlugin(DownstreamPlugin):
 		out_json = json.dumps(out)
 
 		self.send_packet("status_response", self.buff_type.pack_string(out_json))
+		return "finish"
