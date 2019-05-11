@@ -71,6 +71,5 @@ def get_plugins():
 		QueueBossBarPlugin,
 		NotificationsPlugin,
 		WaitingServerPlugin,
-		DisconnectionMessages,
-		AntiKickPlugin
+		DisconnectionMessages
 	]
